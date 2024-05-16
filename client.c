@@ -63,5 +63,6 @@ int main() {
     }
 
     // Close the connection
-    close(clientSocketFD); 
+    close(clientSocketFD);
+    printf("Client socket closed\n"); 
 }

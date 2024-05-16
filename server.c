@@ -72,6 +72,7 @@ int main()
     clientlen = sizeof(clientaddr);
     while (1)
     {
+        printf("server waiting for connection...\n");
         /*
          * accept: wait for a connection request
          */
@@ -104,12 +105,13 @@ int main()
         /*
          * write: echo the input string back to the client
          */
-        n = write(childfd, buf, strlen(buf));
+        n = write(childfd, response, strlen(response));
         if (n < 0) {
             perror("ERROR writing to socket");
             exit(6);
         }
         // When finished with client close connection
         close(childfd);
+        printf("server closed connection\n");
     }
 }
