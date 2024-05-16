@@ -48,7 +48,7 @@ int main()
              sizeof(serveraddr)) < 0)
     {
         perror("ERROR on binding");
-        error("ERROR on binding");
+        exit(2);
     }
 
     //
@@ -60,7 +60,7 @@ int main()
     if (listen(serverSocketFD, 5) < 0) /* allow 5 requests to queue up */
     {
         perror("ERROR on listen");
-        error("ERROR on listen");
+        exit(3);
     }
 
     // Obtain a new socket for connection when a client connects
@@ -76,8 +76,10 @@ int main()
          * accept: wait for a connection request
          */
         childfd = accept(serverSocketFD, (struct sockaddr *)&clientaddr, &clientlen);
-        if (childfd < 0)
-            error("ERROR on accept");
+        if (childfd < 0) {
+            perror("ERROR on accept");
+            exit(4);
+        }
 
         // Read request from client
         //
@@ -89,7 +91,7 @@ int main()
         n = read(childfd, buf, BUFSIZE);
         if (n < 0)
         {
-            error("ERROR reading from socket");
+            exit(5);
             printf("server received %d bytes: %s", n, buf);
         }
 
@@ -103,8 +105,10 @@ int main()
          * write: echo the input string back to the client
          */
         n = write(childfd, buf, strlen(buf));
-        if (n < 0)
-            error("ERROR writing to socket");
+        if (n < 0) {
+            perror("ERROR writing to socket");
+            exit(6);
+        }
         // When finished with client close connection
         close(childfd);
     }
