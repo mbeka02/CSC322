@@ -1,6 +1,7 @@
 int main() {
     // Define IP address of server you want to communicate with (target server)
     //
+    
     // Define port number used by target server
     //
     // Create socket
