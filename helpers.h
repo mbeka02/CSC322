@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
-#define MAX_LINE_LENGTH 1024
+#define MAX_LINE_LENGTH 500
 
 /*
 A book has Title, Author(s), ISBN,
