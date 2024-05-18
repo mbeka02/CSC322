@@ -1,5 +1,5 @@
-#ifndef DATA
-#define DATA
+#ifndef DATA_H
+#define DATA_H
 /**
  * Data structure to hold the data to be sent to the server
  

@@ -1,116 +1,110 @@
-#include <arpa/inet.h> // inet_addr()
-#include <netdb.h>
-#include <netinet/in.h>
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <strings.h> // bzero()
-#include <sys/socket.h>
-#include <unistd.h> // read(), write(), close()
-#include "helpers.h"
-#define BUFSIZE 1024
+#include <unistd.h>
+#include <arpa/inet.h>
+#include "data.h"
+
+#define PORT 3000
+#define BUFFER_SIZE 1024
+
+struct Data which_functionality();
 
 int main() {
-    struct sockaddr_in servaddr, cli;
-    // Define IP address of server you want to communicate with (target server)
-    char * serverIPAddress = "127.0.0.1";
- 
-    // Define port number used by target server
-    int serverPortNumber = 3000;
-    servaddr.sin_family = AF_INET;
-    servaddr.sin_addr.s_addr = inet_addr(serverIPAddress);
-    servaddr.sin_port = htons(serverPortNumber);
+    int sockfd;
+    struct sockaddr_in server_addr;
+    char buffer[BUFFER_SIZE];
+    socklen_t addr_len = sizeof(server_addr);
 
-    // Create socket
-    int clientSocketFD = socket(AF_INET, SOCK_STREAM, 0);
-    if (clientSocketFD < 0)
-    {
-        perror("Error opening socket");
-        exit(1);
+    sockfd = socket(AF_INET, SOCK_STREAM, 0);
+    if (sockfd < 0) {
+        perror("error opening socket");
+        exit(EXIT_FAILURE);
     }
 
-    // Allow TCP to dynamically choose port client will use (so don't bind)
+    server_addr.sin_family = AF_INET;
+    server_addr.sin_port = htons(PORT);
+    server_addr.sin_addr.s_addr = inet_addr("127.0.0.1"); // Change to server's IP if needed
+// Allow TCP to dynamically choose port client will use (so don't bind)
     
     // Connect socket to server
 
     // connect the client socket to server socket
-    if (connect(clientSocketFD, (const struct sockaddr*)&servaddr, sizeof(servaddr))
+    if (connect(sockfd, (const struct sockaddr*)&server_addr, sizeof(server_addr))
         != 0) {
         perror("connection with the server failed...\n");
         exit(0);
     }
 
-    bool stopLooping = false;
-    char *message = malloc(sizeof(char) * 500);
-
-    // Loop
-    while(stopLooping == false) {
-        // Let user choose what they want
-        DisplayMenu(MAX_LINE_LENGTH);
-        int menu_item;
-        printf("Select an item from the menu: ");
-        // Get user input
-        scanf("%d", &menu_item);
-        // switch case for each option
-        switch (menu_item) {
-            case 1:
-                printf("...displaying catalog\n");
-                message = "1";
-                // DisplayCatalog();
-                break;
-            case 2:
-                printf("Enter the title of the book you want to search for: ");
-                char title[100];
-                scanf("%s", title);
-                
-                strcat(message, "2; ");
-                strcat(message, title);
-
-                /* char* search_result = searchInFile(title); */
-                /* if (strcmp(search_result, "") == 0) { */
-                /*     printf("Book Not Found\n"); */
-                /* } else { */
-                /*     printf("Book Found!\n"); */
-                /* } */
-                break;
-            case 3:
-                // PurchaseItem();
-                message = "3";
-                break;
-            case 4:
-                // PayForItem();
-                message = "4";
-                break;
-            case 5:
-                printf("Thanks for shopping with us\n");
-                message = "5";
-                stopLooping = true;
-                break;
-            default:
-                printf("Invalid option\n");
-                break;
+    while (1) {
+        struct Data data = which_functionality();
+        if (data.choice == 0) {
+            printf("Invalid option. Exiting...\n");
+            break;
         }
-
-        // Send a request (use our defined message format)
-        int isWritten = write(clientSocketFD, message, strlen(message));
-
-        if (isWritten == -1) {
-            perror("Could Not Send Data\n");
-            exit(2);
+        // Send data to server
+        sendto(sockfd, &data, sizeof(data), 0, (const struct sockaddr *)&server_addr, addr_len);
+        // Receive data from server
+        ssize_t recv_len = recvfrom(sockfd, buffer, BUFFER_SIZE, 0, (struct sockaddr *)&server_addr, &addr_len);
+        if (recv_len < 0) {
+            perror("recvfrom");
+            break;
         }
-
-        // Await response
-        // Create buffer to hold server response
-        char buffer[BUFSIZE];
-        // Get response
-        bzero(buffer, BUFSIZE); 
-        // read the message from client and copy it in buffer 
-        read(clientSocketFD, buffer, sizeof(buffer));
-        // Print Response
-        printf("\nServer responded with %s\n", buffer);
+        buffer[recv_len] = '\0';
+        printf("Received from server: %s\n", buffer);
     }
 
-    // Close the connection
-    close(clientSocketFD);
-    printf("Client socket closed\n"); 
+    close(sockfd);
+    return 0;
+}
+
+/**
+ * Function to display the functionality options
+ * @return struct Data containing the user's choice and the parameters needed for the chosen functionality
+ */
+struct Data which_functionality() {
+    struct Data data = {0}; // Initialize all fields to 0
+    printf("Which functionality do you want to use?\n");
+    printf("1. Display catalogue\n");
+    printf("2. Pay for book\n");
+    printf("3. Order book\n");
+    printf("4. Search for book\n");
+    printf("5. Order a book\n");
+    printf("Enter option: ");
+    scanf("%d", &data.choice);
+    switch (data.choice) {
+        case 1:
+            printf("***** Display catalogue *****\n");
+            printf("Enter the maximum number of books to be displayed: ");
+            scanf("%d", &data.m);
+            break;
+        case 2:
+            printf("***** Pay for book *****\n");
+            printf("Enter the order number of the book you want to pay for: ");
+            scanf("%d", &data.orderno);
+            printf("Enter the amount you want to pay: ");
+            scanf("%lf", &data.amount);
+            break;
+        case 3:
+            printf("***** Order book *****\n");
+            printf("Enter the number of books you want to order: ");
+            scanf("%d", &data.number_ordered);
+            break;
+        case 4:
+            printf("***** Search for book *****\n");
+            printf("Enter the title of the book you want to search for: ");
+            scanf("%s", data.search);
+            break;
+        case 5:
+            printf("***** Order a book *****\n");
+            printf("Enter the title of the book you want to order: ");
+            scanf("%s", data.y);
+            break;
+        default:
+            printf("Invalid option\n");
+            data.choice = 0;
+            break;
+    }
+    return data;
 }

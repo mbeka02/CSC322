@@ -135,7 +135,7 @@ int main (){
   }
 
   server_addr.sin_family = AF_INET;
-  server_addr.sin_addr.s_addr=INADDR_ANY;
+  server_addr.sin_addr.s_addr=htonl(INADDR_ANY);
   server_addr.sin_port=htons(PORT);
 
   //binding 
