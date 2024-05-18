@@ -7,7 +7,9 @@
 #include <strings.h> // bzero()
 #include <sys/socket.h>
 #include <unistd.h> // read(), write(), close()
+#include "helpers.h"
 #define BUFSIZE 1024
+#define MAX_LINE_LENGTH 1024
 
 int main() {
     struct sockaddr_in servaddr, cli;
@@ -39,8 +41,53 @@ int main() {
         exit(0);
     }
 
+    bool stopLooping = false;
     // Loop
-    while(1) {
+    while(stopLooping == false) {
+        // Let user choose what they want
+        DisplayMenu(MAX_LINE_LENGTH);
+
+
+        int menu_item;
+        printf("Select an item from the menu: ");
+        // Get user input
+        scanf("%d", &menu_item);
+        // switch case for each option
+        while (true) {
+            switch (menu_item) {
+                case 1:
+                    printf("...displaying catalog\n");
+                    DisplayCatalog();
+                    break;
+                case 2:
+                    printf("Enter the title of the book you want to search for: ");
+                    char title[100];
+                    scanf("%s", title);
+
+                    char* search_result = searchInFile(title);
+                    if (strcmp(search_result, "") == 0) {
+                        printf("Book Not Found\n");
+                    } else {
+                        printf("Book Found!\n");
+                    }
+
+                    break;
+                case 3:
+                    PurchaseItem();
+                    break;
+                case 4:
+                    PayForItem();
+                    break;
+                case 5:
+                    printf("Thanks for shopping with us\n");
+                    stopLooping = true;
+                    break;
+                default:
+                    printf("Invalid option\n");
+                    break;
+
+            }
+        }
         // Send a request (use our defined message format)
         char *message = "Hello There Server!";
         int isWritten = write(clientSocketFD, message, strlen(message));
