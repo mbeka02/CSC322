@@ -41,6 +41,8 @@ int main() {
     }
 
     bool stopLooping = false;
+    char *message = malloc(sizeof(char) * 500);
+
     // Loop
     while(stopLooping == false) {
         // Let user choose what they want
@@ -53,35 +55,47 @@ int main() {
         switch (menu_item) {
             case 1:
                 printf("...displaying catalog\n");
-                DisplayCatalog();
+                message = "1";
+                // DisplayCatalog();
+                break;
             case 2:
                 printf("Enter the title of the book you want to search for: ");
                 char title[100];
                 scanf("%s", title);
+                
+                strcat(message, "2; ");
+                strcat(message, title);
 
-                char* search_result = searchInFile(title);
-                if (strcmp(search_result, "") == 0) {
-                    printf("Book Not Found\n");
-                } else {
-                    printf("Book Found!\n");
-                }
+                /* char* search_result = searchInFile(title); */
+                /* if (strcmp(search_result, "") == 0) { */
+                /*     printf("Book Not Found\n"); */
+                /* } else { */
+                /*     printf("Book Found!\n"); */
+                /* } */
+                break;
             case 3:
-                PurchaseItem();
+                // PurchaseItem();
+                message = "3";
+                break;
             case 4:
-                PayForItem();
+                // PayForItem();
+                message = "4";
+                break;
             case 5:
                 printf("Thanks for shopping with us\n");
+                message = "5";
                 stopLooping = true;
+                break;
             default:
                 printf("Invalid option\n");
+                break;
         }
 
         // Send a request (use our defined message format)
-        char *message = "Hello There Server!";
         int isWritten = write(clientSocketFD, message, strlen(message));
 
         if (isWritten == -1) {
-            perror("Could Not Send Data");
+            perror("Could Not Send Data\n");
             exit(2);
         }
 
@@ -93,8 +107,7 @@ int main() {
         // read the message from client and copy it in buffer 
         read(clientSocketFD, buffer, sizeof(buffer));
         // Print Response
-        printf("Server responded with %s", buffer);
-        break;
+        printf("\nServer responded with %s\n", buffer);
     }
 
     // Close the connection

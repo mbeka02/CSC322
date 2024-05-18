@@ -7,6 +7,7 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
+#include "helpers.h"
 #define BUFSIZE 1024
 int main()
 {
@@ -88,6 +89,9 @@ int main()
         /*
          * read: read input string from the client
          */
+
+        bool shouldWrite = true;
+
         bzero(buf, BUFSIZE);
         n = read(childfd, buf, BUFSIZE);
         if (n < 0)
@@ -95,23 +99,34 @@ int main()
             exit(5);
             printf("server received %d bytes: %s", n, buf);
         }
-
-        // Formulate response
-        //
-        char *response = "Yooh yooh bluetooth connected!!";
-
+        printf("Server received: %s\n", buf);
+        
+        char* response = malloc(sizeof(char) * BUFSIZE);
+        
+        if (buf[0] == '1') {
+            DisplayCatalog();       
+        } else if (buf[0] == '2') {
+            searchInFile(""); 
+        } else if (buf[0] == '3') {
+            PurchaseItem(); 
+        } else if (buf[0] == '4') {
+            PayForItem(); 
+        } else if (buf[0] == '5') {
+            close(childfd);
+            printf("server closed connection\n");
+            shouldWrite = false;
+        }
         // Send reply
         //
         /*
          * write: echo the input string back to the client
          */
-        n = write(childfd, response, strlen(response));
-        if (n < 0) {
-            perror("ERROR writing to socket");
-            exit(6);
+        if (shouldWrite == true) {
+            n = write(childfd, response, strlen(response));
+            if (n < 0) {
+                perror("ERROR writing to socket");
+                exit(6);
+            }
         }
-        // When finished with client close connection
-        close(childfd);
-        printf("server closed connection\n");
     }
 }
