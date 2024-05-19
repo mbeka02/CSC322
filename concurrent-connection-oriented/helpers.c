@@ -83,7 +83,7 @@ char* searchInFile(const char *searchStr) {
     return NULL;
 }
 
-char* DisplayCatalog(int M, int x, int z) {
+char* DisplayCatalog(int M, int X, int z) {
     // Read the text file
     FILE *filePtr = fopen("./books.txt", "r");
     if (filePtr == NULL) {
@@ -92,11 +92,11 @@ char* DisplayCatalog(int M, int x, int z) {
 
     // Get M entries as long X + M < Z
     int numberOfFileEntries = 0;
-    if (x + M < z) {
+    if (X + M < z) {
         numberOfFileEntries = M;
     } else {
         // Otherwise get until Z
-        numberOfFileEntries = z - x;
+        numberOfFileEntries = z - X;
     }
 
     char* returnString = (char *) malloc(sizeof(char) * 100 * numberOfFileEntries);
@@ -110,9 +110,9 @@ char* DisplayCatalog(int M, int x, int z) {
     while(fgets(fileContent, contentSize, filePtr)) {
         if (lineNumber == 0) {
             printf("Ignoring header file!\n");
-        } else if (lineNumber < x) {
+        } else if (lineNumber < X) {
             printf("Ignore file content: %s", fileContent);
-        } else if (lineNumber >= x && numberOfFileEntries > 0){
+        } else if (lineNumber >= X && numberOfFileEntries > 0){
             strcat(returnString, fileContent);
             numberOfFileEntries--;
         } else {
@@ -157,6 +157,10 @@ char *SearchBook(char* string){
        fclose(filePtr);
             // Allocate memory for the matching line and copy it.
             char *result = (char *)malloc(strlen(line) + 1);
+            if(result==NULL){
+            perror("memory allocation failed");
+            return NULL;
+      }
             strcpy(result, line);
             return result;
     }
@@ -164,7 +168,36 @@ char *SearchBook(char* string){
 
   return "";
 }
+int OrderBook(char *x, char *y, int n){
 
+  const char *filePath = "books.txt";
+  FILE *filePtr=fopen(filePath,"r");
+  if (filePtr ==NULL){
+    perror("Error opening file");
+  }
+  char line[MAX_LINE_LENGTH];
+  while(fgets(line,MAX_LINE_LENGTH,filePtr)!=NULL){
+    if(strstr(line,x)!=NULL && strstr(line,y)!=NULL){
+       fclose(filePtr);
+            // Allocate memory for the matching line and copy it.
+            char *result = (char *)malloc(strlen(line) + 1);
+            if(result==NULL){
+            perror("memory allocation failed");
+            return 0;
+      }
+            strcpy(result, line);
+            printf("The use has ordered %d copies of %s",n,result);
+            return rand();
+    }
+  }
+
+return 0;
+  
+}
+bool PayForBook(int orderno, float Amount){
+  printf("The order number is : %d  and the amount is : %f",orderno,Amount );
+  return true;
+}  
 void PurchaseItem() {
     // display the catalog
     DisplayCatalog(1, 1, 2);

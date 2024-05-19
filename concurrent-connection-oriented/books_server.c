@@ -35,9 +35,9 @@ if(recv_len < 0){
     {
         // Display catalogue
         // TODO: Make displayCatalog() function return  type *char
-       response=DisplayCatalog(
+       response=DisplayCatalog(//2,1,3
         incoming_data->m,
-        incoming_data->x,
+        incoming_data->X,
         incoming_data->z
       );
         //return "Catalogue displayed";
@@ -53,14 +53,17 @@ if(recv_len < 0){
         // Order a book
         // TODO: Implement orderBook() function
        // return "Book ordered";
-      PurchaseItem();
+      int orderno=OrderBook(incoming_data->x,incoming_data->y,incoming_data->n);
+      sprintf(response,"%d",orderno);
+      //PurchaseItem();
     }
     else if (incoming_data->choice == 4)
     {
         // Pay for book
         // TODO: Make payForItem() function return  type *char
-        PayForItem();
+       bool isSuccessful=PayForBook(incoming_data->orderno,incoming_data->amount);//PayForItem();
        // return "Payment successful";
+      isSuccessful ? response="payment successful" : "payment failed";
     }
     else
     {
