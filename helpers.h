@@ -17,5 +17,6 @@ void PurchaseItem();
 int getPriceOfItem(char *title);
 void PayForItem();
 int OrderBook(char *x , char *y , int n);
+bool PayForBook(int orderno , float Amount);
 
 #endif

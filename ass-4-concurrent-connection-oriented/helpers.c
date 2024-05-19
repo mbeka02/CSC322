@@ -194,6 +194,10 @@ int OrderBook(char *x, char *y, int n){
 return 0;
   
 }
+bool PayForBook(int orderno, float Amount){
+  printf("The order number is : %d  and the amount is : %f",orderno,Amount );
+  return true;
+}  
 void PurchaseItem() {
     // display the catalog
     DisplayCatalog(1, 1, 2);

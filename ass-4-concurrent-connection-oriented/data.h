@@ -1,3 +1,4 @@
+#include <stdbool.h>
 #ifndef DATA_H
 #define DATA_H
 /**
@@ -16,6 +17,7 @@ struct Data
     char x[100];            // Order a book
     int orderno;        // Pay for book
     double amount;      // Pay for book
+    bool isPaymentSuccesful;
 };
 
 #endif

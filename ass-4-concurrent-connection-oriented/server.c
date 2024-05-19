@@ -61,8 +61,9 @@ if(recv_len < 0){
     {
         // Pay for book
         // TODO: Make payForItem() function return  type *char
-        PayForItem();
+       bool isSuccessful=PayForBook(incoming_data->orderno,incoming_data->amount);//PayForItem();
        // return "Payment successful";
+      isSuccessful ? response="payment successful" : "payment failed";
     }
     else
     {
