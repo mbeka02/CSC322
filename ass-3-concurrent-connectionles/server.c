@@ -78,9 +78,12 @@ int setup_server(short port)
 
     // Initialize the address struct
     server_addr.sin_family = AF_INET;
-    server_addr.sin_addr.s_addr = INADDR_ANY;
+    server_addr.sin_addr.s_addr = inet_addr("127.0.0.1");
     server_addr.sin_port = htons(SERVER_PORT);
-
+    // Print the address the server is running on
+    char server_ip[INET_ADDRSTRLEN];
+    inet_ntop(AF_INET, &(server_addr.sin_addr), server_ip, INET_ADDRSTRLEN);
+    printf("Server is running on %s:%d\n", server_ip, ntohs(server_addr.sin_port));
     check(bind(server_socket, (SA *)&server_addr, sizeof(server_addr)), "Bind failed");
 
     return server_socket;

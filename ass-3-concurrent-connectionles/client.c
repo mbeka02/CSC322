@@ -1,17 +1,22 @@
+#define _XOPEN_SOURCE 600
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
 #include <arpa/inet.h>
 #include <data.h>
+#include <netdb.h>
+#include <sys/types.h>
+#include <sys/socket.h>
 #define PORT 8989
 #define BUFFER_SIZE 1024
 
-
 //function prototypes
 struct Data which_functionality();
+
 int main()
-{   
+{   printf("file running\n");
     int sockfd;
     struct sockaddr_in server_addr;
     char buffer[BUFFER_SIZE];
@@ -27,8 +32,23 @@ int main()
     memset(&server_addr, 0, sizeof(server_addr));
     server_addr.sin_family = AF_INET;
     server_addr.sin_port = htons(PORT);
-    server_addr.sin_addr.s_addr = inet_addr("127.0.0.1"); // Change to server's IP if needed
 
+    // Get host IP by name
+    struct addrinfo hints, *res;
+    memset(&hints, 0, sizeof hints);
+    hints.ai_family = AF_INET;
+    hints.ai_socktype = SOCK_DGRAM;
+
+    if (getaddrinfo("nvifnvkjsdnvjkns", NULL, &hints, &res) != 0) {
+        perror("getaddrinfo failed");
+        exit(EXIT_FAILURE);
+    }
+    else{
+        printf("getaddrinfo success\n");
+    }
+
+    server_addr.sin_addr = ((struct sockaddr_in*)res->ai_addr)->sin_addr;
+printf("server address: %s\n", inet_ntoa(server_addr.sin_addr));
     while (1)
     {
         printf("Connected to the server\n");
@@ -38,27 +58,8 @@ int main()
             perror("Invalid option");
             break;
         }
-        // Send data to server
-        printf("Connected to the server");
-        char buffer[sizeof(data)];
-        memcpy(buffer, &data, sizeof(data));
-        sendto(sockfd, buffer, sizeof(buffer), 0, (const struct sockaddr *)&server_addr, addr_len);
-        // Receive data from server
-        printf("Awaiting server response...\n");
-        ssize_t recv_len = recvfrom(sockfd, buffer, BUFFER_SIZE, 0, (struct sockaddr *)&server_addr, &addr_len);
-        if (recv_len < 0)
-        {
-            perror("recvfrom");
-            break;
-        }
-        buffer[recv_len] = '\0';
-        printf("Received from server: %s\n",buffer);
     }
-
-    close(sockfd);
-    return 0;
 }
-
 
 /**
  * Function to display the functionality options

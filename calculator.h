@@ -4,7 +4,6 @@
 
 #include <stdio.h>
 #include <math.h>
-// Function prototypes
 int add(int a, int b);
 int multiply(int a, int b);
 double square_root(int a);
