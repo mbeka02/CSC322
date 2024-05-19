@@ -9,6 +9,7 @@
 #include <arpa/inet.h>
 #include <pthread.h>
 #include "data.h"
+#include "helpers.c"
 #include "helpers.h"
 # define PORT 3000
 #define BUFFERSIZE 1024
@@ -23,7 +24,7 @@ char buffer[BUFFERSIZE];
 
 while(1){
     struct Data data;
-
+     char *response;
     recv_len=recvfrom(sockFd,buffer,BUFFERSIZE,0,(struct sockaddr *)&clientaddr,&clientlen);
 if(recv_len < 0){
       perror("recvfrom");
@@ -34,13 +35,18 @@ if(recv_len < 0){
     {
         // Display catalogue
         // TODO: Make displayCatalog() function return  type *char
-        DisplayCatalog();
+       response=DisplayCatalog(
+        incoming_data->m,
+        incoming_data->x,
+        incoming_data->z
+      );
         //return "Catalogue displayed";
     }
     else if (incoming_data->choice == 2)
     {
         // Search for book
-         searchInFile("");
+        printf("receiving search query: %s",incoming_data->search);
+        response= SearchBook(incoming_data->search);
     }
     else if (incoming_data->choice == 3)
     {
@@ -61,7 +67,7 @@ if(recv_len < 0){
         return "Invalid option";
     }
 
-  char *response = "...received";
+  //response = "...received";
   sendto(sockFd, response, strlen(response), 0, (struct sockaddr *)&clientaddr,clientlen);
   }
     
@@ -224,7 +230,7 @@ int main (){
 }
 
 
-char *server_response(struct Data data)
+/*char *server_response(struct Data data)
 {
     if (data.choice == 1)
     {
@@ -255,4 +261,4 @@ char *server_response(struct Data data)
     {
         return "Invalid option";
     }
-}
+}*/

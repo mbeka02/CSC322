@@ -66,10 +66,10 @@ struct Data which_functionality() {
     struct Data data = {0}; // Initialize all fields to 0
     printf("Which functionality do you want to use?\n");
     printf("1. Display catalogue\n");
-    printf("2. Pay for book\n");
+    printf("2. Search for a book\n");
     printf("3. Order book\n");
-    printf("4. Search for book\n");
-    printf("5. Order a book\n");
+    printf("4. Pay for a book\n");
+    printf("5. Exit (NOT IMPLEMENTED YET)\n");
     printf("Enter option: ");
     scanf("%d", &data.choice);
     switch (data.choice) {
