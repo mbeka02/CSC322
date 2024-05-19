@@ -42,12 +42,15 @@ int main() {
             printf("Invalid option. Exiting...\n");
             break;
         }
+      
         // Send data to server
-        sendto(sockfd, &data, sizeof(data), 0, (const struct sockaddr *)&server_addr, addr_len);
-        // Receive data from server
-        ssize_t recv_len = recvfrom(sockfd, buffer, BUFFER_SIZE, 0, (struct sockaddr *)&server_addr, &addr_len);
-        if (recv_len < 0) {
-            perror("recvfrom");
+      //  sendto(sockfd, &data, sizeof(data), 0, (const struct sockaddr *)&server_addr, addr_len);
+     write(sockfd,&data,sizeof(data));    
+    // Receive data from server
+        //ssize_t recv_len = recvfrom(sockfd, buffer, BUFFER_SIZE, 0, (struct sockaddr *)&server_addr, &addr_len);
+  ssize_t recv_len= read(sockfd,buffer,BUFFER_SIZE);   
+    if (recv_len < 0) {
+            perror("unable to read");
             break;
         }
         buffer[recv_len] = '\0';

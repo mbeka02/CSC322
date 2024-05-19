@@ -25,9 +25,12 @@ char buffer[BUFFERSIZE];
 while(1){
     struct Data data;
      char *response;
-    recv_len=recvfrom(sockFd,buffer,BUFFERSIZE,0,(struct sockaddr *)&clientaddr,&clientlen);
+    recv_len=read(sockFd,buffer,BUFFERSIZE);
 if(recv_len < 0){
-      perror("recvfrom");
+      perror("unable to read");
+      break;
+    }else if(recv_len == 0){
+      printf("Client disconnected\n");
       break;
     }
   struct Data *incoming_data=(struct Data *)buffer;
@@ -71,7 +74,8 @@ if(recv_len < 0){
     }
 
   //response = "...received";
-  sendto(sockFd, response, strlen(response), 0, (struct sockaddr *)&clientaddr,clientlen);
+//  sendto(sockFd, response, strlen(response), 0, (struct sockaddr *)&clientaddr,clientlen);
+  write(sockFd,response,strlen(response));
   }
     
   free(arg);//free socket descriptor mem

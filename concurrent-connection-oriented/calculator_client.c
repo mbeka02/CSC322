@@ -6,7 +6,7 @@
 #include "data.h"
 #include "calculator.h"
 
-#define PORT 3000
+#define PORT 5173
 #define BUFFER_SIZE 1024
 
 struct Calculator_data which_functionality();
@@ -44,11 +44,15 @@ int main() {
             break;
         }
         // Send data to server
-        sendto(sockfd, &data, sizeof(data), 0, (const struct sockaddr *)&server_addr, addr_len);
-        // Receive data from server
-        ssize_t recv_len = recvfrom(sockfd, buffer, BUFFER_SIZE, 0, (struct sockaddr *)&server_addr, &addr_len);
+//        sendto(sockfd, &data, sizeof(data), 0, (const struct sockaddr *)&server_addr, addr_len);
+       write(sockfd,&data,sizeof(data));    
+
+    // Receive data from server
+    //    ssize_t recv_len = recvfrom(sockfd, buffer, BUFFER_SIZE, 0, (struct sockaddr *)&server_addr, &addr_len);
+ssize_t recv_len= read(sockfd,buffer,BUFFER_SIZE);   
+
         if (recv_len < 0) {
-            perror("recvfrom");
+            perror("unable to read");
             break;
         }
         buffer[recv_len] = '\0';
@@ -80,6 +84,7 @@ struct Calculator_data which_functionality() {
             scanf("%d",&data.a);
             printf("Enter the second number:");
             scanf("%d",&data.b);
+            printf("%d",data.a);
             break;
         case 2:
             printf("***** Multiply two numbers *****\n");
