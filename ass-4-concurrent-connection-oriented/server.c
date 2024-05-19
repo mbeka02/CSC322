@@ -37,24 +37,25 @@ if(recv_len < 0){
         // TODO: Make displayCatalog() function return  type *char
        response=DisplayCatalog(//2,1,3
         incoming_data->m,
-        incoming_data->x,
+        incoming_data->X,
         incoming_data->z
       );
-      printf("%d , %d , %d",incoming_data->m,incoming_data->x,incoming_data->z);
         //return "Catalogue displayed";
     }
     else if (incoming_data->choice == 2)
     {
         // Search for book
         printf("receiving search query: %s",incoming_data->search);
-        //response= SearchBook(incoming_data->search);
+        response= SearchBook(incoming_data->search);
     }
     else if (incoming_data->choice == 3)
     {
         // Order a book
         // TODO: Implement orderBook() function
        // return "Book ordered";
-      PurchaseItem();
+      int orderno=OrderBook(incoming_data->x,incoming_data->y,incoming_data->n);
+      sprintf(response,"%d",orderno);
+      //PurchaseItem();
     }
     else if (incoming_data->choice == 4)
     {

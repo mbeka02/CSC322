@@ -16,5 +16,6 @@ char *SearchBook(char* string);
 void PurchaseItem();
 int getPriceOfItem(char *title);
 void PayForItem();
+int OrderBook(char *x , char *y , int n);
 
 #endif
