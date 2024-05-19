@@ -1,7 +1,6 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 #include <unistd.h>
 #include <arpa/inet.h>
 #include "data.h"
@@ -80,27 +79,29 @@ struct Data which_functionality() {
             scanf("%d", &data.m);
             break;
         case 2:
-            printf("***** Pay for book *****\n");
-            printf("Enter the order number of the book you want to pay for: ");
-            scanf("%d", &data.orderno);
-            printf("Enter the amount you want to pay: ");
-            scanf("%lf", &data.amount);
+            printf("***** Search for book *****\n");
+            printf("Enter the title of the book you want to search for: ");
+            scanf("%s", data.search);
             break;
+ 
         case 3:
             printf("***** Order book *****\n");
             printf("Enter the number of books you want to order: ");
             scanf("%d", &data.number_ordered);
             break;
         case 4:
-            printf("***** Search for book *****\n");
-            printf("Enter the title of the book you want to search for: ");
-            scanf("%s", data.search);
+            printf("***** Pay for book *****\n");
+            printf("Enter the order number of the book you want to pay for: ");
+            scanf("%d", &data.orderno);
+            printf("Enter the amount you want to pay: ");
+            scanf("%lf", &data.amount);
             break;
-        case 5:
+        
+      /* case 5:
             printf("***** Order a book *****\n");
             printf("Enter the title of the book you want to order: ");
             scanf("%s", data.y);
-            break;
+            break;*/
         default:
             printf("Invalid option\n");
             data.choice = 0;

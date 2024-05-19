@@ -30,6 +30,37 @@ if(recv_len < 0){
       break;
     }
   struct Data *incoming_data=(struct Data *)buffer;
+    if (incoming_data->choice == 1)
+    {
+        // Display catalogue
+        // TODO: Make displayCatalog() function return  type *char
+        DisplayCatalog();
+        //return "Catalogue displayed";
+    }
+    else if (incoming_data->choice == 2)
+    {
+        // Search for book
+         searchInFile("");
+    }
+    else if (incoming_data->choice == 3)
+    {
+        // Order a book
+        // TODO: Implement orderBook() function
+       // return "Book ordered";
+      PurchaseItem();
+    }
+    else if (incoming_data->choice == 4)
+    {
+        // Pay for book
+        // TODO: Make payForItem() function return  type *char
+        PayForItem();
+       // return "Payment successful";
+    }
+    else
+    {
+        return "Invalid option";
+    }
+
   char *response = "...received";
   sendto(sockFd, response, strlen(response), 0, (struct sockaddr *)&clientaddr,clientlen);
   }
@@ -122,23 +153,27 @@ if((childpid =fork())==0){
   }
 }*/
 int main (){
-
+ // sockFd is the file descriptor for the socket 
+  // client sock is a ptr to the dynaminc int  for the socket descriptor 
   int sockFd , *client_sock;
+  //hold the server and client addressses. 
   struct sockaddr_in server_addr,clientaddr;
+  //hold thread id
   pthread_t thread_id;
+  //length of the client addr structure
  int clientlen = sizeof(clientaddr);
-
+ //create the socket (TCP)
   sockFd=socket(AF_INET,SOCK_STREAM,0);
   if (sockFd==-1){
     perror("Failed to create the socket");
     exit(EXIT_FAILURE);
   }
+ //setup the server address 
+  server_addr.sin_family = AF_INET; //specify IPv4
+  server_addr.sin_addr.s_addr=htonl(INADDR_ANY); //bind socket to all available interfaces
+  server_addr.sin_port=htons(PORT); //convert port_no to network byte order
 
-  server_addr.sin_family = AF_INET;
-  server_addr.sin_addr.s_addr=htonl(INADDR_ANY);
-  server_addr.sin_port=htons(PORT);
-
-  //binding 
+  //binding , associate the socket with the given addr and port 
   if(bind(sockFd,(struct sockaddr *)&server_addr , sizeof(server_addr))==-1){
     perror("Binding failed");
     close(sockFd);
@@ -156,12 +191,13 @@ int main (){
 
     // Accept and handle connections
   while(1){
+    //dynamically allocate space for a client socket descriptor
       client_sock = malloc(sizeof(int));
         if (!client_sock) {
             perror("Malloc failed");
             continue;
         }
-
+       //accept a new connection 
         *client_sock = accept(sockFd, (struct sockaddr *)&clientaddr, &clientlen);
         if (*client_sock == -1) {
             perror("Accept failed");
