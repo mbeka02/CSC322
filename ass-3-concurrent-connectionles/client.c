@@ -4,11 +4,14 @@
 #include <unistd.h>
 #include <arpa/inet.h>
 #include <data.h>
-#define PORT 8080
+#define PORT 8989
 #define BUFFER_SIZE 1024
 
+
+//function prototypes
+struct Data which_functionality();
 int main()
-{
+{   
     int sockfd;
     struct sockaddr_in server_addr;
     char buffer[BUFFER_SIZE];
@@ -28,6 +31,7 @@ int main()
 
     while (1)
     {
+        printf("Connected to the server\n");
         struct Data data = which_functionality();
         if (data.choice == 0)
         {
@@ -35,8 +39,12 @@ int main()
             break;
         }
         // Send data to server
-        sendto(sockfd, &data, sizeof(data), 0, (const struct sockaddr *)&server_addr, addr_len);
+        printf("Connected to the server");
+        char buffer[sizeof(data)];
+        memcpy(buffer, &data, sizeof(data));
+        sendto(sockfd, buffer, sizeof(buffer), 0, (const struct sockaddr *)&server_addr, addr_len);
         // Receive data from server
+        printf("Awaiting server response...\n");
         ssize_t recv_len = recvfrom(sockfd, buffer, BUFFER_SIZE, 0, (struct sockaddr *)&server_addr, &addr_len);
         if (recv_len < 0)
         {
@@ -44,7 +52,7 @@ int main()
             break;
         }
         buffer[recv_len] = '\0';
-        printf("Received from server: %s\n", buffer);
+        printf("Received from server: %s\n",buffer);
     }
 
     close(sockfd);
@@ -66,27 +74,27 @@ struct Data which_functionality()
     printf("search for book");
     printf("Order a book");
     printf("Enter message: ");
-    scanf("%d", data.choice);
+    scanf("%d", &data.choice);
     switch (data.choice)
     {
     case 1:
         printf("*****Display catalogue*****\n");
         printf("Enter the maximum bnumber of books to be displayed: ");
 
-        scanf("%d", data.m);
+        scanf("%d", &data.m);
         return data;
     case 2:
         printf("*****Pay for book*****\n");
         printf("Enter the order number of the book you want to pay for: ");
-        scanf("%d", data.orderno);
+        scanf("%d", &data.orderno);
         printf("Enter the amount you want to pay: ");
-        scanf("%lf", data.amount);
+        scanf("%lf", &data.amount);
 
         return data;
     case 3:
         printf("*****Order book*****\n");
         printf("Enter the number of books you want to order: ");
-        scanf("%d", data.number_ordered);
+        scanf("%d", &data.number_ordered);
         return data;
     case 4:
         printf("*****search for book*****\n");

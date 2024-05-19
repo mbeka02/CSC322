@@ -4,6 +4,18 @@
 #include <stdbool.h>
 #define MAX_LINE_LENGTH 500
 
+
+
+char *centeredSentence(char *sentence, int lengthOfLine);
+char *leftAlignSentence(char *sentence, int lengthOfLine);
+void printSameCharacterXTimes(char character, int times);
+char *searchInFile(const char *searchStr);
+void DisplayMenu(int lengthOfLine);
+void DisplayCatalog();
+void PurchaseItem();
+int getPriceOfItem(char *title);
+void PayForItem();
+
 /*
 A book has Title, Author(s), ISBN,
 Publisher, Date of publication
