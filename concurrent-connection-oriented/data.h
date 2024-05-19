@@ -11,7 +11,7 @@ struct Data
     int m;              // Display catalogue
     int X;              // Display catalogue
     int z;              // Display catalogue
-    char search[100];       // search for book
+  char search[100];       // search for book
     int n; // Order a book
     char y[100];            // Order a book
     char x[100];            // Order a book
