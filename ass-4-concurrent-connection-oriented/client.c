@@ -77,6 +77,10 @@ struct Data which_functionality() {
             printf("***** Display catalogue *****\n");
             printf("Enter the maximum number of books to be displayed: ");
             scanf("%d", &data.m);
+            printf("Enter the value of x:");
+            scanf("%d",&data.x);
+            printf("Enter the value of z:");
+            scanf("%d",&data.z);
             break;
         case 2:
             printf("***** Search for book *****\n");

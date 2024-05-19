@@ -35,18 +35,19 @@ if(recv_len < 0){
     {
         // Display catalogue
         // TODO: Make displayCatalog() function return  type *char
-       response=DisplayCatalog(
+       response=DisplayCatalog(//2,1,3
         incoming_data->m,
         incoming_data->x,
         incoming_data->z
       );
+      printf("%d , %d , %d",incoming_data->m,incoming_data->x,incoming_data->z);
         //return "Catalogue displayed";
     }
     else if (incoming_data->choice == 2)
     {
         // Search for book
         printf("receiving search query: %s",incoming_data->search);
-        response= SearchBook(incoming_data->search);
+        //response= SearchBook(incoming_data->search);
     }
     else if (incoming_data->choice == 3)
     {
