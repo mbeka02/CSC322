@@ -1,5 +1,5 @@
 #include "calculator.h"
-
+#include <math.h>
 // Function to add two numbers
 int add(int a, int b) {
     return a + b;
