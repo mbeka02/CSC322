@@ -1,37 +1,53 @@
+#include <arpa/inet.h> // inet_addr()
+#include <netdb.h>
+#include <netinet/in.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <unistd.h>
-#include <arpa/inet.h>
-#include <data_conn.h>
-#define PORT 8989
-#define BUFFER_SIZE 1024
-
-
-//function prototypes
+#include <strings.h> // bzero()
+#include <sys/socket.h>
+#include <unistd.h> // read(), write(), close()
+#include "helpers.c"
+#include "data_iter.h"
+#define BUFSIZE 4096
 struct Data which_functionality();
-int main()
-{   
-    int sockfd;
-    struct sockaddr_in server_addr;
-    char buffer[BUFFER_SIZE];
-    socklen_t addr_len = sizeof(server_addr);
+int main() {
+    struct sockaddr_in servaddr, cli;
+    // Define IP address of server you want to communicate with (target server)
+    char * serverIPAddress = "127.0.0.1";
+ 
+    // Define port number used by target server
+    int serverPortNumber = 3000;
+    servaddr.sin_family = AF_INET;
+    servaddr.sin_addr.s_addr = inet_addr(serverIPAddress);
+    servaddr.sin_port = htons(serverPortNumber);
 
-    sockfd = socket(AF_INET, SOCK_DGRAM, 0);
-    if (sockfd < 0)
+    // Create socket
+    int clientSocketFD = socket(AF_INET, SOCK_STREAM, 0);
+    if (clientSocketFD < 0)
     {
-        perror("socket");
-        exit(EXIT_FAILURE);
+        perror("Error opening socket");
+        exit(1);
     }
 
-    memset(&server_addr, 0, sizeof(server_addr));
-    server_addr.sin_family = AF_INET;
-    server_addr.sin_port = htons(PORT);
-    server_addr.sin_addr.s_addr = inet_addr("127.0.0.1"); // Change to server's IP if needed
+    // Allow TCP to dynamically choose port client will use (so don't bind)
+    
+    // Connect socket to server
 
-    while (1)
-    {
-        struct Data data = which_functionality();
+    // connect the client socket to server socket
+    if (connect(clientSocketFD, (const struct sockaddr*)&servaddr, sizeof(servaddr))
+        != 0) {
+        perror("connection with the server failed...\n");
+        exit(0);
+    }
+
+    bool stopLooping = false;
+    char *message = malloc(sizeof(char) * 500);
+
+    // Loop
+    while(stopLooping == false) {
+        // Get user input
+         struct Data data = which_functionality();
         if (data.choice == 0)
         {
             perror("Invalid option");
@@ -39,23 +55,32 @@ int main()
         }
         // Send data to server
         printf("Connected to the server");
-        char buffer[sizeof(data)];
-        memcpy(buffer, &data, sizeof(data));
-        sendto(sockfd, buffer, sizeof(buffer), 0, (const struct sockaddr *)&server_addr, addr_len);
-        // Receive data from server
-        printf("Awaiting server response...\n");
-        ssize_t recv_len = recvfrom(sockfd, buffer, BUFFER_SIZE, 0, (struct sockaddr *)&server_addr, &addr_len);
-        if (recv_len < 0)
-        {
-            perror("recvfrom");
-            break;
+        char buffer_serve[BUFSIZE];
+        memcpy(buffer_serve, &data, sizeof(data));
+
+
+        // Send a request (use our defined message format)
+        int isWritten = write(clientSocketFD, buffer_serve, sizeof(buffer_serve));
+
+        if (isWritten == -1) {
+            perror("Could Not Send Data\n");
+            exit(2);
         }
-        buffer[recv_len] = '\0';
-        printf("Received from server: %s\n",buffer);
+
+        // Await response
+        // Create buffer to hold server response
+        char buffer[BUFSIZE];
+        // Get response
+        bzero(buffer, BUFSIZE); 
+        // read the message from client and copy it in buffer 
+        read(clientSocketFD, buffer, sizeof(buffer));
+        // Print Response
+        printf("\nServer responded with %s\n", buffer);
     }
 
-    close(sockfd);
-    return 0;
+    // Close the connection
+    close(clientSocketFD);
+    printf("Client socket closed\n"); 
 }
 
 
