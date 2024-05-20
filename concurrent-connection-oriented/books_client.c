@@ -92,7 +92,7 @@ struct Data which_functionality() {
             break;
  
         case 3:
-            printf("***** Order book *****\n");
+            printf("****** Order book *****\n");
             printf("Enter the number of books you want to order: ");
             
             scanf("%d", &data.n);
