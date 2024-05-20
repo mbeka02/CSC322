@@ -15,15 +15,17 @@ int main() {
     char buffer[BUFFER_SIZE];
     socklen_t addr_len = sizeof(server_addr);
 
+    // Create a UDP socket
     sockfd = socket(AF_INET, SOCK_DGRAM, 0);
     if (sockfd < 0) {
-        perror("error opening socket");
+        perror("Error opening socket");
         exit(EXIT_FAILURE);
     }
 
+    // Setup server address
     server_addr.sin_family = AF_INET;
     server_addr.sin_port = htons(PORT);
-    server_addr.sin_addr.s_addr = inet_addr("192.168.1.100"); // Change to server's IP if needed
+    server_addr.sin_addr.s_addr = inet_addr("192.168.100.73"); // Change to server's IP if needed
 
     while (1) {
         struct Data data = which_functionality();
@@ -32,18 +34,32 @@ int main() {
             break;
         }
 
-        sendto(sockfd, &data, sizeof(data), 0, (struct sockaddr *)&server_addr, addr_len);
-        
-        ssize_t recv_len = recvfrom(sockfd, buffer, BUFFER_SIZE, 0, (struct sockaddr *)&server_addr, &addr_len);
-        if (recv_len < 0) {
-            perror("unable to read");
+        // Send data to the server
+        ssize_t sent_len = sendto(sockfd, &data, sizeof(data), 0, (struct sockaddr *)&server_addr, addr_len);
+        if (sent_len < 0) {
+            perror("Error sending data");
             break;
         }
 
+        // Set a timeout for receiving data
+        struct timeval tv;
+        tv.tv_sec = 5; // 5 seconds timeout
+        tv.tv_usec = 0;
+        setsockopt(sockfd, SOL_SOCKET, SO_RCVTIMEO, (const char*)&tv, sizeof(tv));
+
+        // Receive data from the server
+        ssize_t recv_len = recvfrom(sockfd, buffer, BUFFER_SIZE, 0, (struct sockaddr *)&server_addr, &addr_len);
+        if (recv_len < 0) {
+            perror("Unable to read from server. Server might be down or unreachable");
+            break;
+        }
+
+        // Null-terminate the received data
         buffer[recv_len] = '\0';
         printf("Received from server: %s\n", buffer);
     }
 
+    // Close the socket
     close(sockfd);
     return 0;
 }
@@ -55,7 +71,7 @@ struct Data which_functionality() {
     printf("2. Search for a book\n");
     printf("3. Order book\n");
     printf("4. Pay for a book\n");
-    printf("5. Exit (NOT IMPLEMENTED YET)\n");
+    printf("5. Exit\n");
     printf("Enter option: ");
     scanf("%d", &data.choice);
     switch (data.choice) {
