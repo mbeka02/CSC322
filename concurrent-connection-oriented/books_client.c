@@ -14,17 +14,19 @@ int main() {
     struct sockaddr_in server_addr;
     char buffer[BUFFER_SIZE];
     socklen_t addr_len = sizeof(server_addr);
-
+    
+    // Create client socket
     sockfd = socket(AF_INET, SOCK_STREAM, 0);
     if (sockfd < 0) {
         perror("error opening socket");
         exit(EXIT_FAILURE);
     }
+    printf("Created client socket\n");
 
     server_addr.sin_family = AF_INET;
     server_addr.sin_port = htons(PORT);
-    server_addr.sin_addr.s_addr = inet_addr("127.0.0.1"); // Change to server's IP if needed
-// Allow TCP to dynamically choose port client will use (so don't bind)
+    server_addr.sin_addr.s_addr = inet_addr("192.168.100.107"); // Change to server's IP if needed
+    // Allow TCP to dynamically choose port client will use (so don't bind)
     
     // Connect socket to server
 
@@ -34,6 +36,7 @@ int main() {
         perror("connection with the server failed...\n");
         exit(0);
     }
+    printf("Connected to server\n");
 
     while (1) {
         struct Data data = which_functionality();
@@ -41,14 +44,14 @@ int main() {
             printf("Invalid option. Exiting...\n");
             break;
         }
-      
+
         // Send data to server
-      //  sendto(sockfd, &data, sizeof(data), 0, (const struct sockaddr *)&server_addr, addr_len);
-     write(sockfd,&data,sizeof(data));    
-    // Receive data from server
+        //  sendto(sockfd, &data, sizeof(data), 0, (const struct sockaddr *)&server_addr, addr_len);
+        write(sockfd,&data,sizeof(data));    
+        // Receive data from server
         //ssize_t recv_len = recvfrom(sockfd, buffer, BUFFER_SIZE, 0, (struct sockaddr *)&server_addr, &addr_len);
-  ssize_t recv_len= read(sockfd,buffer,BUFFER_SIZE);   
-    if (recv_len < 0) {
+        ssize_t recv_len= read(sockfd,buffer,BUFFER_SIZE);   
+        if (recv_len < 0) {
             perror("unable to read");
             break;
         }
