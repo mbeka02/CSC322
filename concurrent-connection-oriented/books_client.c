@@ -110,7 +110,7 @@ struct Data which_functionality() {
             break;
         
        case 5:
-            //for now do the same as default case , the server should log out that the client has disconnected
+            //for now do the same as default case , the server should log out that the client is disconnected
             printf("***** Exiting *****\n");
             data.choice=0;
             break;
