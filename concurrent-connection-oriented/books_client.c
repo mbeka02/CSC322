@@ -72,7 +72,7 @@ struct Data which_functionality() {
     printf("2. Search for a book\n");
     printf("3. Order book\n");
     printf("4. Pay for a book\n");
-    printf("5. Exit (NOT IMPLEMENTED YET)\n");
+    printf("5. Exit\n");
     printf("Enter option: ");
     scanf("%d", &data.choice);
     switch (data.choice) {
@@ -109,11 +109,11 @@ struct Data which_functionality() {
             scanf("%lf", &data.amount);
             break;
         
-      /* case 5:
-            printf("***** Order a book *****\n");
-            printf("Enter the title of the book you want to order: ");
-            scanf("%s", data.y);
-            break;*/
+       case 5:
+            //for now do the same as default case , the server should log out that the client has disconnected
+            printf("***** Exiting *****\n");
+            data.choice=0;
+            break;
         default:
             printf("Invalid option\n");
             data.choice = 0;
