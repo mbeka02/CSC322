@@ -78,7 +78,7 @@ int setup_server(short port)
 
     // Initialize the address struct
     server_addr.sin_family = AF_INET;
-    server_addr.sin_addr.s_addr = inet_addr("127.0.0.1");
+    server_addr.sin_addr.s_addr = htonl(INADDR_ANY);
     server_addr.sin_port = htons(SERVER_PORT);
     // Print the address the server is running on
     char server_ip[INET_ADDRSTRLEN];
