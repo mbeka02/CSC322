@@ -32,15 +32,14 @@ int main() {
             break;
         }
 
-        // Send data to server
-        sendto(sockfd, &data, sizeof(data), 0, (const struct sockaddr *)&server_addr, addr_len);
-
-        // Receive data from server
+        sendto(sockfd, &data, sizeof(data), 0, (struct sockaddr *)&server_addr, addr_len);
+        
         ssize_t recv_len = recvfrom(sockfd, buffer, BUFFER_SIZE, 0, (struct sockaddr *)&server_addr, &addr_len);
         if (recv_len < 0) {
             perror("unable to read");
             break;
         }
+
         buffer[recv_len] = '\0';
         printf("Received from server: %s\n", buffer);
     }
@@ -49,10 +48,6 @@ int main() {
     return 0;
 }
 
-/**
- * Function to display the functionality options
- * @return struct Data containing the user's choice and the parameters needed for the chosen functionality
- */
 struct Data which_functionality() {
     struct Data data = {0}; // Initialize all fields to 0
     printf("Which functionality do you want to use?\n");
