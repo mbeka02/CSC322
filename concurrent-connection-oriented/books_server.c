@@ -15,74 +15,85 @@
 #define BUFFERSIZE 1024
 
 void *handle_client(void *arg){
-int sockFd= *(int *)arg;
-struct sockaddr_in clientaddr; /* client addr */
-int clientlen=sizeof(clientaddr);/* byte size of client's address */
-ssize_t recv_len;
-char buffer[BUFFERSIZE];
+    int sockFd= *(int *)arg;
+    struct sockaddr_in clientaddr; /* client addr */
+    int clientlen=sizeof(clientaddr);/* byte size of client's address */
+    ssize_t recv_len;
+    char buffer[BUFFERSIZE];
 
 
-while(1){
-    struct Data data;
-     char *response;
-    recv_len=read(sockFd,buffer,BUFFERSIZE);
-if(recv_len < 0){
-      perror("unable to read");
-      break;
-    }else if(recv_len == 0){
-      printf("Client disconnected\n");
-      break;
-    }
-  struct Data *incoming_data=(struct Data *)buffer;
-    if (incoming_data->choice == 1)
-    {
-        // Display catalogue
-        // TODO: Make displayCatalog() function return  type *char
-       response=DisplayCatalog(//2,1,3
-        incoming_data->m,
-        incoming_data->X,
-        incoming_data->z
-      );
-        //return "Catalogue displayed";
-    }
-    else if (incoming_data->choice == 2)
-    {
-        // Search for book
-        printf("receiving search query: %s",incoming_data->search);
-        response= SearchBook(incoming_data->search);
-    }
-    else if (incoming_data->choice == 3)
-    {
-        // Order a book
-        // TODO: Implement orderBook() function
-       // return "Book ordered";
-      int orderno=OrderBook(incoming_data->x,incoming_data->y,incoming_data->n);
-      sprintf(response,"%d",orderno);
-      //PurchaseItem();
-    }
-    else if (incoming_data->choice == 4)
-    {
-        // Pay for book
-        // TODO: Make payForItem() function return  type *char
-       bool isSuccessful=PayForBook(incoming_data->orderno,incoming_data->amount);//PayForItem();
-       // return "Payment successful";
-      isSuccessful ? response="payment successful" : "payment failed";
-    }
-    else
-    {
-        return "Invalid option";
+    while(1){
+        struct Data data;
+        char* response = malloc(sizeof(char) * 100);
+        recv_len=read(sockFd,buffer,BUFFERSIZE);
+        if(recv_len < 0){
+            perror("unable to read");
+            break;
+        }else if(recv_len == 0){
+            printf("Client disconnected\n");
+            break;
+        }
+        struct Data *incoming_data=(struct Data *)buffer;
+        if (incoming_data->choice == 1)
+        {
+            // Display catalogue
+            // TODO: Make displayCatalog() function return  type *char
+            response=DisplayCatalog(//2,1,3
+                    incoming_data->m,
+                    incoming_data->X,
+                    incoming_data->z
+                    );
+            //return "Catalogue displayed";
+        }
+        else if (incoming_data->choice == 2)
+        {
+            // Search for book
+            printf("receiving search query: %s",incoming_data->search);
+            response= SearchBook(incoming_data->search);
+        }
+        else if (incoming_data->choice == 3)
+        {
+            // Order a book
+            // TODO: Implement orderBook() function
+            // return "Book ordered";
+            int orderno=OrderBook(incoming_data->x,incoming_data->y,incoming_data->n);
+            if (orderno == -1) {
+                printf("The book does not exist!\n");
+                response = "The book does not exist\n";
+            } else {
+                sprintf(
+                    response,
+                    "Order No: %d: Number of books ordered: %d; Book title: %s; Book ISBN: %s",
+                    orderno,
+                    incoming_data->n,
+                    incoming_data->x,
+                    incoming_data->y
+                );
+            }
+        }
+        else if (incoming_data->choice == 4)
+        {
+            // Pay for book
+            // TODO: Make payForItem() function return  type *char
+            bool isSuccessful=PayForBook(incoming_data->orderno,incoming_data->amount);//PayForItem();
+                                                                                       // return "Payment successful";
+            isSuccessful ? response="payment successful" : "payment failed";
+        }
+        else
+        {
+            return "Invalid option";
+        }
+
+        //response = "...received";
+        //  sendto(sockFd, response, strlen(response), 0, (struct sockaddr *)&clientaddr,clientlen);
+        write(sockFd,response,strlen(response));
     }
 
-  //response = "...received";
-//  sendto(sockFd, response, strlen(response), 0, (struct sockaddr *)&clientaddr,clientlen);
-  write(sockFd,response,strlen(response));
-  }
-    
-  free(arg);//free socket descriptor mem
-  
-close(sockFd);
-pthread_exit(NULL);
-return NULL;
+    free(arg);//free socket descriptor mem
+
+    close(sockFd);
+    pthread_exit(NULL);
+    return NULL;
 }
 
 int main (){

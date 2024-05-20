@@ -21,7 +21,6 @@ int main() {
         perror("error opening socket");
         exit(EXIT_FAILURE);
     }
-    printf("Created client socket\n");
 
     server_addr.sin_family = AF_INET;
     server_addr.sin_port = htons(PORT);

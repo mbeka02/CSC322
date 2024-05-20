@@ -168,13 +168,20 @@ char *SearchBook(char* string){
 
   return "";
 }
+/*
+ *  x => title
+ *  y => ISBN
+ *  n => number of books to order
+ * */
 int OrderBook(char *x, char *y, int n){
-
+  // Open the file
   const char *filePath = "books.txt";
   FILE *filePtr=fopen(filePath,"r");
   if (filePtr ==NULL){
     perror("Error opening file");
   }
+
+
   char line[MAX_LINE_LENGTH];
   while(fgets(line,MAX_LINE_LENGTH,filePtr)!=NULL){
     if(strstr(line,x)!=NULL && strstr(line,y)!=NULL){
@@ -183,7 +190,7 @@ int OrderBook(char *x, char *y, int n){
             char *result = (char *)malloc(strlen(line) + 1);
             if(result==NULL){
             perror("memory allocation failed");
-            return 0;
+            return -1;
       }
             strcpy(result, line);
             printf("The use has ordered %d copies of %s",n,result);
@@ -191,7 +198,7 @@ int OrderBook(char *x, char *y, int n){
     }
   }
 
-return 0;
+return -1;
   
 }
 bool PayForBook(int orderno, float Amount){
