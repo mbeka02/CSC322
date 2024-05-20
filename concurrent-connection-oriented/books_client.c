@@ -79,7 +79,7 @@ struct Data which_functionality() {
             scanf("%s", data.search);
             break;
         case 3:
-            printf("***** Order book *****\n");
+            printf("****** Order book *****\n");
             printf("Enter the number of books you want to order: ");
             scanf("%d", &data.n);
             printf("Enter the title: ");
@@ -97,7 +97,7 @@ struct Data which_functionality() {
 
         
        case 5:
-            //for now do the same as default case , the server should log out that the client has disconnected
+            //for now do the same as default case , the server should log out that the client is disconnected
             printf("***** Exiting *****\n");
             data.choice=0;
             break;
