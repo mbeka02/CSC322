@@ -3,7 +3,7 @@
 #include <string.h>
 #include <unistd.h>
 #include <arpa/inet.h>
-#include <data.h>
+#include <data_conn.h>
 #define PORT 8989
 #define BUFFER_SIZE 1024
 
@@ -27,7 +27,7 @@ int main()
     memset(&server_addr, 0, sizeof(server_addr));
     server_addr.sin_family = AF_INET;
     server_addr.sin_port = htons(PORT);
-    server_addr.sin_addr.s_addr = inet_addr("127.0.0.1"); // Change to server's IP if needed
+    server_addr.sin_addr.s_addr = inet_addr("192.168.100.73"); // Change to server's IP if needed
 
     while (1)
     {
@@ -79,8 +79,11 @@ struct Data which_functionality()
     case 1:
         printf("*****Display catalogue*****\n");
         printf("Enter the maximum bnumber of books to be displayed: ");
-
         scanf("%d", &data.m);
+        printf("Enter value for x: ");
+        scanf("%d", &data.x);
+        printf("Enter value for y: ");
+        scanf("%d", &data.z);
         return data;
     case 2:
         printf("*****Pay for book*****\n");
@@ -90,11 +93,11 @@ struct Data which_functionality()
         scanf("%lf", &data.amount);
 
         return data;
-    case 3:
-        printf("*****Order book*****\n");
-        printf("Enter the number of books you want to order: ");
-        scanf("%d", &data.number_ordered);
-        return data;
+    // case 3:
+    //     printf("*****Order book*****\n");
+    //     printf("Enter the number of books you want to order: ");
+    //     scanf("%d", &data.number_ordered);
+    //     return data;
     case 4:
         printf("*****search for book*****\n");
         printf("Enter the title of the book you want to search for: ");
@@ -104,6 +107,11 @@ struct Data which_functionality()
         printf("*****Order a book*****\n");
         printf("Enter the title of the book you want to order");
         scanf("%s", data.y);
+        printf("Enter the value for n:");
+        scanf("%s", data.n);
+        printf("Enter the number of books you want to order: ");
+        scanf("%d", &data.number_ordered);
+
         return data;
     default:
         printf("Invalid option\n");
