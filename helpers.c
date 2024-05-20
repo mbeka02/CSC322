@@ -237,3 +237,7 @@ void printSameCharacterXTimes(char character, int times) {
     }
     printf("\n");
 }
+int OrderBook(char *x , char *y , int n){
+  printf("Ordering %d copies of %s by %s\n",n,x,y);
+  return 0;
+}
