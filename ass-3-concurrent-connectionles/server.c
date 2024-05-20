@@ -15,8 +15,8 @@
 #include <arpa/inet.h>
 #include <stdbool.h>
 #include <limits.h>
-#include "data.h"
-#include "helpers.h"
+#include "data_conn.h"
+#include "helpers.c"
 
 #ifndef PATH_MAX
 #define PATH_MAX 4096
@@ -43,24 +43,6 @@ int main(int argc, char **argv)
         SA_IN client_addr;
         socklen_t addr_len = sizeof(SA_IN);
         char buffer[BUFSIZE];
-
-        // // Receive a message from a client
-        // ssize_t bytes_received = recvfrom(server_socket, buffer, BUFSIZE, 0, (SA *)&client_addr, &addr_len);
-        // printf("Never reached here\n");
-        // if (bytes_received < 0)
-        // {
-        //     perror("recvfrom error");
-        //     exit(1);
-        // }
-        // struct Data data;
-        // memcpy(&data, buffer, sizeof(data));
-        // printf("Received message: %d\n", data.choice);
-        
-        // struct Data *received_data = (struct Data *)buffer;
-        // // check(bytes_received, "recvfrom error");
-        // printf("Never reached here 2\n");
-        // char *response = server_response(*received_data);
-        
 
         // Handle the received message
         handle_connection(server_socket, &client_addr);
@@ -100,7 +82,7 @@ int check(int exp, const char *msg)
 }
 
 void handle_connection(int server_socket, SA_IN *client_addr)
-{ 
+{
     char buffer[BUFSIZE];
     size_t bytes_read;
     socklen_t addr_len = sizeof(SA_IN);
@@ -137,31 +119,32 @@ void handle_connection(int server_socket, SA_IN *client_addr)
 char *server_response(struct Data data)
 {
     printf("In server response\n");
-    //TODO:
+    // TODO:
     if (data.choice == 1)
     {
         // Display catalogue
         // TODO: Make displayCatalog() function return  type *char
-        // DisplayCatalog();
+        
         printf("Catalogue displayed\n");
-        return "Catalogue displayed";
+        return DisplayCatalog(data.m, data.x, data.z);
     }
-    else if (data.choice == 2)
+    else if (data.choice == 4)
     {
         // Search for book
         return searchInFile(data.search);
     }
-    else if (data.choice == 3)
+    else if (data.choice == 5)
     {
         // Order a book
         // TODO: Implement orderBook() function
+        int order_no = OrderBook(data.y, data.n, data.number_ordered);
         return "Book ordered";
     }
-    else if (data.choice == 4)
+    else if (data.choice == 2)
     {
         // Pay for book
         // TODO: Make payForItem() function return  type *char
-        PayForItem();
+        PayForItem(data);
         return "Payment successful";
     }
     else
