@@ -1,6 +1,6 @@
-#include "helpers.c"
+#include "interface.h"
 
 int main() {
-    char* returned = DisplayCatalog(2, 1, 3);
-    printf("%s", returned);
+    int orderNo = OrderBook("Ugly", "UON2024Press", 10);
+    printf("Order number is %d\n", orderNo);
 }
