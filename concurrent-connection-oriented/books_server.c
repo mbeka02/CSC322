@@ -8,9 +8,8 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <pthread.h>
-#include "data.h"
-#include "helpers.c"
-#include "helpers.h"
+#include "../data.h"
+#include "../interface.h"
 # define PORT 3000
 #define BUFFERSIZE 1024
 

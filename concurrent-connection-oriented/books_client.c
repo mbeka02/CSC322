@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <arpa/inet.h>
-#include "data.h"
+#include "../data.h"
 
 #define PORT 3000
 #define BUFFER_SIZE 1024
@@ -55,7 +55,7 @@ int main() {
             break;
         }
         buffer[recv_len] = '\0';
-        printf("Received from server: %s\n", buffer);
+        printf("Received from server =>\n %s\n", buffer);
     }
 
     close(sockfd);
@@ -81,9 +81,9 @@ struct Data which_functionality() {
             printf("***** Display catalogue *****\n");
             printf("Enter the maximum number of books to be displayed: ");
             scanf("%d", &data.m);
-            printf("Enter the value of x:");
+            printf("Enter the value of x (from book number):");
             scanf("%d",&data.X);
-            printf("Enter the value of z:");
+            printf("Enter the value of z ( to book number):");
             scanf("%d",&data.z);
             break;
         case 2:

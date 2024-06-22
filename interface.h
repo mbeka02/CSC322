@@ -64,7 +64,11 @@ int OrderBook(char *x , char *y , int n){
   // Return order number
   return line;
 }
-
+// TO DO : WORK ON THIS FUNCTION , CURRENT IMPLEMENTATION IS A PLACEHOLDER
+bool PayForBook(int orderno, float Amount){
+  printf("The order number is : %d  and the amount is : %f",orderno,Amount );
+  return true;
+}
 char* DisplayCatalog(int M, int x, int z) {
     // Read the text file
     FILE *filePtr = fopen("./books.txt", "r");
