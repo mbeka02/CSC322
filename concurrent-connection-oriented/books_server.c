@@ -29,7 +29,7 @@ void *handle_client(void *arg){
             perror("unable to read");
             break;
         }else if(recv_len == 0){
-            printf("Client disconnected\n");
+            printf("\n...client disconnected\n");
             break;
         }
         struct Data *incoming_data=(struct Data *)buffer;
@@ -73,11 +73,10 @@ void *handle_client(void *arg){
         else if (incoming_data->choice == 4)
         {
             // Pay for book
-            // TODO: Make payForItem() function return  type *char
-            bool isSuccessful=PayForBook(incoming_data->orderno,incoming_data->amount);//PayForItem();
-                                                                                       // return "Payment successful";
-            isSuccessful ? response="payment successful" : "payment failed";
-        }
+            int total=PayForBook(incoming_data->orderno,incoming_data->amount);
+
+            sprintf(response,"The total is : %d",total);  
+    }
         else
         {
             return "Invalid option";
