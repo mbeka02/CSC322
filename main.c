@@ -197,7 +197,7 @@ void PayForItem() {
   } else {
     printf("Payment cancelled.\n");
   }
-}
+}atoi( )
 
 int main(void) {
   int menu_item;
