@@ -24,7 +24,7 @@ int main() {
 
     server_addr.sin_family = AF_INET;
     server_addr.sin_port = htons(PORT);
-    server_addr.sin_addr.s_addr = inet_addr("192.168.100.107"); // Change to server's IP if needed
+    server_addr.sin_addr.s_addr = inet_addr("127.0.0.1");//("192.168.100.107"); // Change to server's IP if needed
     // Allow TCP to dynamically choose port client will use (so don't bind)
     
     // Connect socket to server
