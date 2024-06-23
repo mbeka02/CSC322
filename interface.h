@@ -36,13 +36,14 @@ int OrderBook(char *x , char *y , int n){
   if (doesBookExist == 0) {
         // Book does not exist
         printf("Book %s does not exist!", x);
-        return 0;
+        return -1;
   }
   
   // Store book in orders list if it exists
   FILE *orderFile = fopen("orders.txt", "a+");
   if (orderFile == NULL) {
     perror("Error opening file");
+    return -1;
   }
   char orderFileRecord[100];
   
@@ -50,10 +51,11 @@ int OrderBook(char *x , char *y , int n){
     perror("Error formatting order record");
   }
   fputs(orderFileRecord, orderFile);
-
+  fclose(orderFile);
   // Get order number
   char buffer[256];
   int line = 0;
+  orderFile=fopen("orders.txt","r");
   while (fgets(buffer, 256, orderFile) != NULL) {
     printf("A new line found\n");
     line ++; 
@@ -65,9 +67,9 @@ int OrderBook(char *x , char *y , int n){
   return line;
 }
 // TO DO : WORK ON THIS FUNCTION , CURRENT IMPLEMENTATION IS A PLACEHOLDER
-bool PayForBook(int orderno, float Amount){
+int PayForBook(int orderno, float Amount){
   printf("The order number is : %d  and the amount is : %f",orderno,Amount );
-  return true;
+  return 1;
 }
 char* DisplayCatalog(int M, int x, int z) {
     // Read the text file
