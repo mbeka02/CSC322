@@ -81,9 +81,9 @@ struct Data which_functionality() {
             printf("***** Display catalogue *****\n");
             printf("Enter the maximum number of books to be displayed: ");
             scanf("%d", &data.m);
-            printf("Enter the value of x (from book number):");
+            printf("Enter the value of x (from book number): ");
             scanf("%d",&data.X);
-            printf("Enter the value of z ( to book number):");
+            printf("Enter the value of z ( to book number): ");
             scanf("%d",&data.z);
             break;
         case 2:
@@ -97,9 +97,9 @@ struct Data which_functionality() {
             printf("Enter the number of books you want to order: ");
             
             scanf("%d", &data.n);
-            printf("Enter the title:");
+            printf("Enter the title: ");
             scanf("%s",data.x);
-            printf("Enter the ISBN Number:");
+            printf("Enter the ISBN Number: ");
             scanf("%s",data.y);
             break;
         case 4:
