@@ -113,26 +113,27 @@ int PayForBook(int orderno, float Amount) {
         perror("Book does not exist!\n");
         return -1;
     }
-    printf("Book exists\n");
     
     // We get the book and number of books
-    printf("%s is in buffer\n", buffer);
     int numBooks = getAmountOfBooks(buffer);
 
     // We get price of book
     char searchBook[100];
     getBookTitle(buffer, searchBook);
-    printf("Search results are: %s\n", searchBook);
 
     // We multiply price and number of books
     char *bookSearch = SearchBook(searchBook);
 
-    printf("Book search result is: %s\n", bookSearch);
     int bookPrice = getAmountOfBooks(bookSearch);
     return bookPrice * numBooks;
 }
 
-char *DisplayCatalog(int M, int x, int z) {
+/*
+ * M - max number of books
+ * x - lower bound (from)
+ * z - upper bounde (to)
+ * */
+void DisplayCatalog(int M, int x, int z, char *returnString) {
   // Read the text file
   FILE *filePtr = fopen("./books.txt", "r");
   if (filePtr == NULL) {
@@ -148,8 +149,6 @@ char *DisplayCatalog(int M, int x, int z) {
     numberOfFileEntries = z - x;
   }
 
-  char *returnString = (char *)malloc(sizeof(char) * 100 * numberOfFileEntries);
-
   // Store content of file
   int contentSize = 1000;
   char fileContent[contentSize];
@@ -164,14 +163,10 @@ char *DisplayCatalog(int M, int x, int z) {
     } else if (lineNumber >= x && numberOfFileEntries > 0) {
       strcat(returnString, fileContent);
       numberOfFileEntries--;
-    } else {
-      printf("Ignore file because it's out of range!\n");
-    }
+    } 
     lineNumber++;
   }
 
   fclose(filePtr);
-  // Return results
-  return returnString;
 }
 #endif
