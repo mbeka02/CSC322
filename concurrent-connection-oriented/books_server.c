@@ -86,6 +86,7 @@ void *handle_client(void *arg){
         //response = "...received";
         //  sendto(sockFd, response, strlen(response), 0, (struct sockaddr *)&clientaddr,clientlen);
         write(sockFd,response,strlen(response));
+        free(response);
     }
 
     free(arg);//free socket descriptor mem
