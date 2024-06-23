@@ -60,16 +60,14 @@ void *handle_client(void *arg){
             // return "Book ordered";
             int orderno=OrderBook(incoming_data->x,incoming_data->y,incoming_data->n);
             if (orderno == -1) {
-                printf("The book does not exist!\n");
-                response = "The book does not exist\n";
+                sprintf(response, "Order Failed! Book %s does not exist", incoming_data->x);
+            } else if (orderno == -2) {
+                response = "Order Failed! Internal Server Error";
             } else {
                 sprintf(
                     response,
-                    "Order No: %d: Number of books ordered: %d; Book title: %s; Book ISBN: %s",
-                    orderno,
-                    incoming_data->n,
-                    incoming_data->x,
-                    incoming_data->y
+                    "Order successful! Order No: %d",
+                    orderno
                 );
             }
         }
@@ -78,7 +76,11 @@ void *handle_client(void *arg){
             // Pay for book
             int total=PayForBook(incoming_data->orderno,incoming_data->amount);
 
-            sprintf(response,"The total is : %d",total);  
+            if (total > incoming_data->amount) {
+                response = "Transaction failed! Books cost more than sent amount";
+            } else {
+                response = "Transaction sucessful! Books will arrive in 2 business days";
+            }
     }
         else
         {
