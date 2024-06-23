@@ -1,5 +1,6 @@
 #include <asm-generic/socket.h>
 #include <stdio.h>
+#include <strings.h>
 #include <unistd.h>
 #include <stdlib.h>
 #include <string.h>
@@ -24,7 +25,7 @@ void *handle_client(void *arg){
 
     while(1){
         struct Data data;
-        char* response = malloc(sizeof(char) * 100);
+        char* response = malloc(sizeof(char) * 5000);
         recv_len=read(sockFd,buffer,BUFFERSIZE);
         if(recv_len < 0){
             perror("unable to read");
@@ -38,10 +39,11 @@ void *handle_client(void *arg){
         {
             // Display catalogue
             // TODO: Make displayCatalog() function return  type *char
-            response=DisplayCatalog(//2,1,3
+            DisplayCatalog(//2,1,3
                     incoming_data->m,
                     incoming_data->X,
-                    incoming_data->z
+                    incoming_data->z,
+                    response
                     );
             //return "Catalogue displayed";
         }
@@ -86,6 +88,7 @@ void *handle_client(void *arg){
         //response = "...received";
         //  sendto(sockFd, response, strlen(response), 0, (struct sockaddr *)&clientaddr,clientlen);
         write(sockFd,response,strlen(response));
+        strcpy(response, "");
         free(response);
     }
 
