@@ -1,5 +1,5 @@
 S/No  Title  Authors  ISBN  Publisher  Date-of-publication
-1 Network  programming  xxxxxxx  xxxxxx  xxxxxxxxx  xxxxxxxxxxxxxx  100
+1 Network  programming  C.A.Moturi  978-6-23-156910-0  KUPress  1979-02-15  100
 2 Network  Programming  John Doe 978-3-16-148410-0    TechPress 2023-01-15  200
 3 Ugly Love  Colleen John  978-0-13-454534-4  Wepublishers  27/04/2024  250
 4    Clean Code            Robert C.     978-0-13-235088-4 Prentice Hall  2008-08-01  150
