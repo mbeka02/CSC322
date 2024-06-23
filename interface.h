@@ -67,17 +67,14 @@ int getAmountOfBooks(char *order) {
     int posOfAmount = 0;
     // Go to end of string
     for (int i = strlen(order); i >= 0; i--) {
-        printf("%c is in pos %d\n", order[i], i);
         if (order[i] == ' ') {
             posOfAmount = i;
             break;
         }
     }
 
-    printf("Amount of books were buying starts at pos %d\n", posOfAmount);
     char number[100];
     strncpy(number, order+(posOfAmount + 1), strlen(order));
-    printf("number is %s\n", number);
     
     return atoi(number);
 }
@@ -86,14 +83,12 @@ void *getBookTitle(char *order, char *returnStr) {
     int posOfAmount = 0;
     // Go to end of string
     for (int i = 0; i < strlen(order); i++) {
-        printf("%c is in pos %d\n", order[i], i);
         if (order[i] == ' ') {
             posOfAmount = i;
             break;
         }
     }
 
-    printf("Amount of books were buying starts at pos %d\n", posOfAmount);
     strncpy(returnStr, order+(0), posOfAmount);
 
     return returnStr;
@@ -101,7 +96,6 @@ void *getBookTitle(char *order, char *returnStr) {
 
 // TO DO : WORK ON THIS FUNCTION , CURRENT IMPLEMENTATION IS A PLACEHOLDER
 int PayForBook(int orderno, float Amount) {
-  // printf("The order number is : %d  and the amount is : %f",orderno,Amount );
     int line = 0;
     char buffer[256];
     FILE* orderFile = fopen("orders.txt", "r");
