@@ -32,6 +32,10 @@ int main()
         perror("Error opening socket");
         exit(1);
     }
+
+    int optval = 1;
+    setsockopt(serverSocketFD, SOL_SOCKET, SO_REUSEADDR, (const void *)&optval, sizeof(int));
+
     // Bind to well known address
 
     /*

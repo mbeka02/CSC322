@@ -1,3 +1,4 @@
+#include <asm-generic/socket.h>
 #include <stdio.h>
 #include <unistd.h>
 #include <stdlib.h>
@@ -111,6 +112,9 @@ int main (){
     perror("Failed to create the socket");
     exit(EXIT_FAILURE);
   }
+
+  int optval = 1;
+  setsockopt(sockFd, SOL_SOCKET, SO_REUSEADDR, (const void *)&optval, sizeof(int));
  //setup the server address 
   server_addr.sin_family = AF_INET; //specify IPv4
   server_addr.sin_addr.s_addr=htonl(INADDR_ANY); //bind socket to all available interfaces

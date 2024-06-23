@@ -29,8 +29,6 @@ char *SearchBook(char *string) {
 }
 
 int OrderBook(char *x, char *y, int n) {
-  printf("Ordering %d copies of %s by %s\n", n, x, y);
-
   // See if book exists
   int doesBookExist = strcmp(SearchBook(x), defaultSearchStringResult);
   if (doesBookExist == 0) {
@@ -57,10 +55,8 @@ int OrderBook(char *x, char *y, int n) {
   int line = 0;
   orderFile = fopen("orders.txt", "r");
   while (fgets(buffer, 256, orderFile) != NULL) {
-    printf("A new line found\n");
     line++;
   }
-  printf("%s in buffer\n", buffer);
   fclose(orderFile);
 
   // Return order number
