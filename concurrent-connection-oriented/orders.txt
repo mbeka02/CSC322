@@ -1,0 +1,10 @@
+Network 1
+Ugly 2
+The 10
+Ugly 10
+Clean 0
+Clean 10
+Ugly 10
+Clean 10
+Ugly 10
+Ugly 10

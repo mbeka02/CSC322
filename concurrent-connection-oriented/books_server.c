@@ -1,4 +1,6 @@
+#include <asm-generic/socket.h>
 #include <stdio.h>
+#include <strings.h>
 #include <unistd.h>
 #include <stdlib.h>
 #include <string.h>
@@ -8,163 +10,97 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <pthread.h>
-#include "data.h"
-#include "helpers.c"
-#include "helpers.h"
+#include "../data.h"
+#include "../interface.h"
 # define PORT 3000
 #define BUFFERSIZE 1024
 
 void *handle_client(void *arg){
-int sockFd= *(int *)arg;
-struct sockaddr_in clientaddr; /* client addr */
-int clientlen=sizeof(clientaddr);/* byte size of client's address */
-ssize_t recv_len;
-char buffer[BUFFERSIZE];
+    int sockFd= *(int *)arg;
+    struct sockaddr_in clientaddr; /* client addr */
+    int clientlen=sizeof(clientaddr);/* byte size of client's address */
+    ssize_t recv_len;
+    char buffer[BUFFERSIZE];
 
 
-while(1){
-    struct Data data;
-     char *response;
-    recv_len=read(sockFd,buffer,BUFFERSIZE);
-if(recv_len < 0){
-      perror("unable to read");
-      break;
-    }else if(recv_len == 0){
-      printf("Client disconnected\n");
-      break;
+    while(1){
+        struct Data data;
+        char* response = malloc(sizeof(char) * 5000);
+        recv_len=read(sockFd,buffer,BUFFERSIZE);
+        if(recv_len < 0){
+            perror("unable to read");
+            break;
+        }else if(recv_len == 0){
+            printf("\n...client disconnected\n");
+            break;
+        }
+        struct Data *incoming_data=(struct Data *)buffer;
+        if (incoming_data->choice == 1)
+        {
+            // Display catalogue
+            // TODO: Make displayCatalog() function return  type *char
+            DisplayCatalog(//2,1,3
+                    incoming_data->m,
+                    incoming_data->X,
+                    incoming_data->z,
+                    response
+                    );
+            //return "Catalogue displayed";
+        }
+        else if (incoming_data->choice == 2)
+        {
+            // Search for book
+            printf("receiving search query: %s",incoming_data->search);
+            response= SearchBook(incoming_data->search);
+        }
+        else if (incoming_data->choice == 3)
+        {
+            // Order a book
+            // TODO: Implement orderBook() function
+            // return "Book ordered";
+            int orderno=OrderBook(incoming_data->x,incoming_data->y,incoming_data->n);
+            if (orderno == -1) {
+                sprintf(response, "Order Failed! Book %s does not exist", incoming_data->x);
+            } else if (orderno == -2) {
+                response = "Order Failed! Internal Server Error";
+            } else {
+                sprintf(
+                    response,
+                    "Order successful! Order No: %d",
+                    orderno
+                );
+            }
+        }
+        else if (incoming_data->choice == 4)
+        {
+            // Pay for book
+            int total=PayForBook(incoming_data->orderno,incoming_data->amount);
+
+            if (total > incoming_data->amount) {
+                response = "Transaction failed! Books cost more than sent amount";
+            } else {
+                response = "Transaction sucessful! Books will arrive in 2 business days";
+            }
     }
-  struct Data *incoming_data=(struct Data *)buffer;
-    if (incoming_data->choice == 1)
-    {
-        // Display catalogue
-        // TODO: Make displayCatalog() function return  type *char
-       response=DisplayCatalog(//2,1,3
-        incoming_data->m,
-        incoming_data->X,
-        incoming_data->z
-      );
-        //return "Catalogue displayed";
-    }
-    else if (incoming_data->choice == 2)
-    {
-        // Search for book
-        printf("receiving search query: %s",incoming_data->search);
-        response= SearchBook(incoming_data->search);
-    }
-    else if (incoming_data->choice == 3)
-    {
-        // Order a book
-        // TODO: Implement orderBook() function
-       // return "Book ordered";
-      int orderno=OrderBook(incoming_data->x,incoming_data->y,incoming_data->n);
-      sprintf(response,"%d",orderno);
-      //PurchaseItem();
-    }
-    else if (incoming_data->choice == 4)
-    {
-        // Pay for book
-        // TODO: Make payForItem() function return  type *char
-       bool isSuccessful=PayForBook(incoming_data->orderno,incoming_data->amount);//PayForItem();
-       // return "Payment successful";
-      isSuccessful ? response="payment successful" : "payment failed";
-    }
-    else
-    {
-        return "Invalid option";
+        else
+        {
+            return "Invalid option";
+        }
+
+        //response = "...received";
+        //  sendto(sockFd, response, strlen(response), 0, (struct sockaddr *)&clientaddr,clientlen);
+        write(sockFd,response,strlen(response));
+        strcpy(response, "");
+        free(response);
     }
 
-  //response = "...received";
-//  sendto(sockFd, response, strlen(response), 0, (struct sockaddr *)&clientaddr,clientlen);
-  write(sockFd,response,strlen(response));
-  }
-    
-  free(arg);//free socket descriptor mem
-  
-close(sockFd);
-pthread_exit(NULL);
-return NULL;
+    free(arg);//free socket descriptor mem
+
+    close(sockFd);
+    pthread_exit(NULL);
+    return NULL;
 }
 
-/*int main (){
-//The server socket id 
-  int sockFd , ret;
-struct sockaddr_in serveraddr; server's addr 
-struct sockaddr_in clientaddr;  client addr  
-int clientlen;                 byte size of client's address  
-int childfd;                    child socket 
-struct hostent *hostp;          client host info 
-char buf[BUFSIZE];              message buffer 
-char *hostaddrp;                dotted decimal host addr string 
-int n;                          message byte size 
-// Child process id
-    pid_t childpid;
-    
-
-    // Create socket
-    sockFd = socket(AF_INET, SOCK_STREAM, 0);
-    if (sockFd < 0)
-    {
-        perror("Error opening socket");
-        exit(1);
-    }
-    // Bind to well known address
-
-    
-    // build the server's Internet address
-     
-    bzero((char *)&serveraddr, sizeof(serveraddr));
-    // this is an Internet address 
-    serveraddr.sin_family = AF_INET;
-
-    // let the system figure out our IP address 
-    serveraddr.sin_addr.s_addr = htonl(INADDR_ANY);
-
-    // this is the port we will listen on 
-    serveraddr.sin_port = htons((unsigned short)PORT);
-
-    
-     // bind: associate the parent socket with a port
-     
-    if (bind(sockFd, (struct sockaddr *)&serveraddr,
-             sizeof(serveraddr)) < 0)
-    {
-        perror("ERROR on binding");
-        exit(2);
-    }
-
-    //
-    // Place connection in listen mode
-    //
-    
-     //listen: make this socket ready to accept connection requests
-     
-    if (listen(sockFd, 10) == 0) // allow 5 requests to queue up 
-    {
-        perror("ERROR on listen");
-        exit(3);
-    }
-  int count=0;
-
-    // Obtain a new socket for connection when a client connects
-    //
-    // main loop: wait for a connection request, echo input line,then close connection.
-  
-    clientlen = sizeof(clientaddr);
- while(1){
-printf("server waiting for connection...\n");
-     childfd = accept(sockFd, (struct sockaddr *)&clientaddr, &clientlen);
-        if (childfd < 0) {
-            perror("ERROR on accept");
-            exit(4);
-        }
-printf("accepted connection from %s:%d\n",inet_ntoa(clientaddr.sin_addr),ntohs(clientaddr.sin_port));
-
-printf("%d clients connected \n",count++);
-if((childpid =fork())==0){
-      close(sockFd);
-    }
-  }
-}*/
 int main (){
  // sockFd is the file descriptor for the socket 
   // client sock is a ptr to the dynaminc int  for the socket descriptor 
@@ -181,6 +117,9 @@ int main (){
     perror("Failed to create the socket");
     exit(EXIT_FAILURE);
   }
+
+  int optval = 1;
+  setsockopt(sockFd, SOL_SOCKET, SO_REUSEADDR, (const void *)&optval, sizeof(int));
  //setup the server address 
   server_addr.sin_family = AF_INET; //specify IPv4
   server_addr.sin_addr.s_addr=htonl(INADDR_ANY); //bind socket to all available interfaces
