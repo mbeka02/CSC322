@@ -158,6 +158,8 @@ int main(int argc, char const *argv[])
 
             if (response != NULL)
             {
+                // Add delay
+                sleep(5);
                 sendto(server_fd, response, strlen(response), 0, (struct sockaddr *)&client_address, client_address_length);
                 if (response != "\nInvalid Option. Try again\n")
                 {

@@ -41,7 +41,7 @@ int OrderBook(char *x, char *y, int n) {
   FILE *orderFile = fopen("orders.txt", "a+");
   if (orderFile == NULL) {
     perror("Error opening file");
-    return -1;
+    return -2;
   }
   char orderFileRecord[100];
 
@@ -108,6 +108,7 @@ int PayForBook(int orderno, float Amount) {
         }
         line++;
     }
+    fclose(orderFile);
 
     if (line < orderno) {
         perror("Book does not exist!\n");
@@ -125,6 +126,7 @@ int PayForBook(int orderno, float Amount) {
     char *bookSearch = SearchBook(searchBook);
 
     int bookPrice = getAmountOfBooks(bookSearch);
+    free(bookSearch);
     return bookPrice * numBooks;
 }
 
