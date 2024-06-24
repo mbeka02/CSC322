@@ -2,14 +2,26 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <arpa/inet.h>
+#include<string.h>
+#include <netinet/in.h>
+#include <netdb.h>
 #include "../data.h"
 
-#define PORT 3000
 #define BUFFER_SIZE 1024
 
 struct Data which_functionality();
 
-int main() {
+int main(int argc, char const *argv[]) {
+
+  // Get Client Host and Port
+    if(argc != 3) {
+        fprintf(stderr, "(Failed) usage: %s <host> <port>\n", argv[0]);
+        exit(EXIT_FAILURE);
+    }
+    char *SERVER_HOSTNAME = strdup(argv[1]);
+    int SERVER_PORT = atoi(argv[2]);
+
+
     int sockfd;
     struct sockaddr_in server_addr;
     char buffer[BUFFER_SIZE];
@@ -22,9 +34,24 @@ int main() {
         exit(EXIT_FAILURE);
     }
 
+ // Getting the server IP address via DNS
+    struct hostent *server_host = gethostbyname(SERVER_HOSTNAME);
+    if(server_host == NULL) {
+        fprintf(stderr,"ERROR, no such host as %s\n", SERVER_HOSTNAME);
+        exit(EXIT_FAILURE);
+    }
+
+ bzero((char *)&server_addr, sizeof(server_addr)); // Clearing server address
     server_addr.sin_family = AF_INET;
-    server_addr.sin_port = htons(PORT);
-    server_addr.sin_addr.s_addr = inet_addr("127.0.0.1"); // Change to server's IP if needed
+    bcopy(
+        (char*)server_host->h_addr_list[0],
+        (char*)&server_addr.sin_addr.s_addr,
+        server_host->h_length
+    );
+  
+
+    server_addr.sin_port = htons(SERVER_PORT);
+   // server_addr.sin_addr.s_addr = inet_addr("127.0.0.1"); // Change to server's IP if needed
     // Allow TCP to dynamically choose port client will use (so don't bind)
     
     // Connect socket to server
