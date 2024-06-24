@@ -105,6 +105,9 @@ struct Data which_functionality() {
             printf("Enter the amount you want to pay: ");
             scanf("%lf", &data.amount);
             break;
+        case 5:
+            data.choice = 0;
+            break;
         default:
             printf("Invalid option\n");
             data.choice = 0;

@@ -7,9 +7,8 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
-#include "data.h"
-#include "helpers.c"
-#include "helpers.h"
+#include "../data.h"
+#include "../interface.h"
 
 #define PORT 3000
 #define BUFFERSIZE 1024
@@ -34,20 +33,32 @@ void handle_client(int sockFd, struct sockaddr_in *clientaddr) {
         }
 
         struct Data *incoming_data = (struct Data *)buffer;
-        char response[BUFFERSIZE] = {0};
+        char response[5000] = {0};
 
         if (incoming_data->choice == 1) {
-            snprintf(response, BUFFERSIZE, "%s", DisplayCatalog(incoming_data->m, incoming_data->X, incoming_data->z));
+            DisplayCatalog(incoming_data->m, incoming_data->X, incoming_data->z, response);
         } else if (incoming_data->choice == 2) {
-            snprintf(response, BUFFERSIZE, "%s", SearchBook(incoming_data->search));
+            char *search_result = SearchBook(incoming_data->search);
+            snprintf(response, sizeof(response), "%s", search_result);
+            if (search_result != defaultSearchStringResult) {
+                free(search_result);
+            }
         } else if (incoming_data->choice == 3) {
             int orderno = OrderBook(incoming_data->x, incoming_data->y, incoming_data->n);
-            snprintf(response, BUFFERSIZE, "%d", orderno);
+            if (orderno == -1) {
+                snprintf(response, sizeof(response), "Order Failed! Book %s does not exist", incoming_data->x);
+            } else {
+                snprintf(response, sizeof(response), "Order successful! Order No: %d", orderno);
+            }
         } else if (incoming_data->choice == 4) {
-            bool isSuccessful = PayForBook(incoming_data->orderno, incoming_data->amount);
-            snprintf(response, BUFFERSIZE, "%s", isSuccessful ? "payment successful" : "payment failed");
+            int total = PayForBook(incoming_data->orderno, incoming_data->amount);
+            if (total < 0) {
+                snprintf(response, sizeof(response), "Transaction failed! Book does not exist or cost more than sent amount");
+            } else {
+                snprintf(response, sizeof(response), "Transaction successful! Books will arrive in 2 business days");
+            }
         } else {
-            snprintf(response, BUFFERSIZE, "Invalid option");
+            snprintf(response, sizeof(response), "Invalid option");
         }
 
         sendto(sockFd, response, strlen(response), 0, (struct sockaddr *)clientaddr, addr_len);
@@ -63,7 +74,6 @@ int main() {
         perror("Failed to create the socket");
         exit(EXIT_FAILURE);
     }
-
 
     int optval = 1;
     setsockopt(sockFd, SOL_SOCKET, SO_REUSEADDR, (const void *)&optval, sizeof(int));
