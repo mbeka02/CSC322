@@ -30,7 +30,7 @@ int main() {
         exit(1);
     }
 
-    // Allow TCP to dynamically choose port client will use (so don't bind)
+    // Allow TCP to dynamically choose port client will use
     
     // Connect socket to server
 
