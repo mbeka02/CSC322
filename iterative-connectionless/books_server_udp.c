@@ -60,7 +60,8 @@ void handle_client(int sockFd, struct sockaddr_in *clientaddr) {
         } else {
             snprintf(response, sizeof(response), "Invalid option");
         }
-
+        
+        sleep(5);
         sendto(sockFd, response, strlen(response), 0, (struct sockaddr *)clientaddr, addr_len);
     }
 }

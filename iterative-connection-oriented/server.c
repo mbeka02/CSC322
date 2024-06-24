@@ -7,7 +7,7 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
-#include "helpers.c"
+#include "../helpers.c"
 #include "data_iter.h"
 
 #define BUFSIZE 4096
