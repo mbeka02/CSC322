@@ -166,7 +166,7 @@ char *SearchBook(char* string){
 }
 
 void PurchaseItem() {
-    // display the catalog
+    // display the catalogg
     DisplayCatalog(1, 1, 2);
 
     char title[100];
