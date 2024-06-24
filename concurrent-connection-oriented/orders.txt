@@ -8,3 +8,4 @@ Ugly 10
 Clean 10
 Ugly 10
 Ugly 10
+Ugly 5
