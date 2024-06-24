@@ -42,10 +42,10 @@ int main() {
         }
 
         // Set a timeout for receiving data
-        struct timeval tv;
-        tv.tv_sec = 5; // 5 seconds timeout
-        tv.tv_usec = 0;
-        setsockopt(sockfd, SOL_SOCKET, SO_RCVTIMEO, (const char*)&tv, sizeof(tv));
+        // struct timeval tv;
+        // tv.tv_sec = 5; // 5 seconds timeout
+        // tv.tv_usec = 0;
+        // setsockopt(sockfd, SOL_SOCKET, SO_RCVTIMEO, (const char*)&tv, sizeof(tv));
 
         // Receive data from the server
         ssize_t recv_len = recvfrom(sockfd, buffer, BUFFER_SIZE, 0, (struct sockaddr *)&server_addr, &addr_len);
