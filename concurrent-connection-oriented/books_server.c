@@ -12,7 +12,6 @@
 #include <pthread.h>
 #include "../data.h"
 #include "../interface.h"
-# define PORT 3000
 #define BUFFERSIZE 1024
 
 void *handle_client(void *arg){
@@ -101,7 +100,16 @@ void *handle_client(void *arg){
     return NULL;
 }
 
-int main (){
+int main (int argc, char const *argv[]){
+// Get Server Port
+    if (argc != 2)
+    {
+        fprintf(stderr, "(Failed) usage: %s <port>\n", argv[0]);
+        exit(EXIT_FAILURE);
+    }
+    int SERVER_PORT = atoi(argv[1]);
+
+ 
  // sockFd is the file descriptor for the socket 
   // client sock is a ptr to the dynaminc int  for the socket descriptor 
   int sockFd , *client_sock;
@@ -123,7 +131,7 @@ int main (){
  //setup the server address 
   server_addr.sin_family = AF_INET; //specify IPv4
   server_addr.sin_addr.s_addr=htonl(INADDR_ANY); //bind socket to all available interfaces
-  server_addr.sin_port=htons(PORT); //convert port_no to network byte order
+  server_addr.sin_port=htons(SERVER_PORT); //convert port_no to network byte order
 
   //binding , associate the socket with the given addr and port 
   if(bind(sockFd,(struct sockaddr *)&server_addr , sizeof(server_addr))==-1){
@@ -139,7 +147,7 @@ int main (){
         exit(EXIT_FAILURE);
     }
 
-    printf("Server is listening on port %d\n", PORT);
+    printf("Server is listening on port %d\n", SERVER_PORT);
 
     // Accept and handle connections
   while(1){
