@@ -1,14 +1,13 @@
 #include <arpa/inet.h> // inet_addr()
 #include <netdb.h>
 #include <netinet/in.h>
-#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <strings.h> // bzero()
 #include <sys/socket.h>
 #include <unistd.h> // read(), write(), close()
-#include "../interface.h"
+#include "helpers.c"
 #include "data_iter.h"
 #define BUFSIZE 4096
 struct Data which_functionality();
@@ -31,7 +30,7 @@ int main() {
         exit(1);
     }
 
-    // Allow TCP to dynamically choose port client will use
+    // Allow TCP to dynamically choose port client will use (so don't bind)
     
     // Connect socket to server
 
