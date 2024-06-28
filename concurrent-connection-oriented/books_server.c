@@ -184,7 +184,8 @@ int main(int argc, char const *argv[])
 
         printf("A connection has been accepted from %s:%d\n", inet_ntoa(clientaddr.sin_addr), ntohs(clientaddr.sin_port));
 
-        // Create a new thread for each client
+        // Create a new thread(slave) to handle each client connection
+    /* pthread_create() takes an id for the thread , attributes , start routine and the args of the start routine*/
         if (pthread_create(&thread_id, NULL, handle_client, (void *)client_sock) != 0)
         {
             perror("Unable to create the thread");
@@ -199,35 +200,4 @@ int main(int argc, char const *argv[])
     return 0;
 }
 
-/*char *server_response(struct Data data)
-{
-    if (data.choice == 1)
-    {
-        // Display catalogue
-        // TODO: Make displayCatalog() function return  type *char
-        DisplayCatalog();
-        return "Catalogue displayed";
-    }
-    else if (data.choice == 2)
-    {
-        // Search for book
-        return searchInFile(data.search);
-    }
-    else if (data.choice == 3)
-    {
-        // Order a book
-        // TODO: Implement orderBook() function
-        return "Book ordered";
-    }
-    else if (data.choice == 4)
-    {
-        // Pay for book
-        // TODO: Make payForItem() function return  type *char
-        PayForItem();
-        return "Payment successful";
-    }
-    else
-    {
-        return "Invalid option";
-    }
-}*/
+

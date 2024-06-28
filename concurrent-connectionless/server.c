@@ -45,7 +45,7 @@ int main(int argc, char const *argv[])
     }
     int SERVER_PORT = atoi(argv[1]);
 
-    // Socket
+    // create UDP socket
     int server_fd = socket(AF_INET, SOCK_DGRAM, 0);
     if (server_fd < 0)
     {
@@ -65,7 +65,7 @@ int main(int argc, char const *argv[])
     server_address.sin_addr.s_addr = INADDR_ANY;
     server_address.sin_port = htons(SERVER_PORT); // Host to network order
 
-    // Bind
+    // Binding
     if (bind(server_fd, (struct sockaddr *)&server_address, sizeof(server_address)) < 0)
     {
         perror("Binding of server socket file descriptor failed");
@@ -87,7 +87,7 @@ int main(int argc, char const *argv[])
         struct sockaddr_in client_address;
         socklen_t client_address_length = sizeof(client_address);
 
-        // Receive
+        // Receive client requests
         bytes_read_from_client = recvfrom(server_fd, buffer, BUFFER_SIZE, 0, (struct sockaddr *)&client_address, &client_address_length);
         if (bytes_read_from_client < 0)
         {
@@ -95,7 +95,7 @@ int main(int argc, char const *argv[])
             continue;
         }
 
-        // Handle each request in a new process
+        // Handle each request in a new  child process
         pid_t pid = fork();
         if (pid == 0)
         { // Child process
